@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class MultiServlet
  */
-public class MultiServlet extends HttpServlet {
+public class ManETS_ServerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor. 
      */
-    public MultiServlet() {
+    public ManETS_ServerServlet() {
         // TODO Auto-generated constructor stub
     }
 
