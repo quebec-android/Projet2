@@ -5,6 +5,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import uk.co.caprica.vlcj.binding.LibVlc;
+import uk.co.caprica.vlcj.runtime.RuntimeUtil;
+
+import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 
 /**
@@ -18,7 +23,7 @@ public class ManETS_ServerServlet extends HttpServlet {
      */
     public ManETS_ServerServlet() {
     	NativeLibrary.addSearchPath(
-		RuntimeUtil.getLibVlcLibraryName(), "EMPLACEMENT DU DOSSIER QUI CONTIENT libvlc"
+		RuntimeUtil.getLibVlcLibraryName(), "/Applications/VLC.app/Contents/MacOS"//"EMPLACEMENT DU DOSSIER QUI CONTIENT libvlc"
 		);
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
     }

@@ -1,3 +1,7 @@
 *.class
 .metadata/*
 */.settings/*
+*/.DS_Store
+ManETS/WebContent/WEB-INF/.DS_Store
+
+ManETS/WebContent/WEB-INF/lib/.DS_Store
