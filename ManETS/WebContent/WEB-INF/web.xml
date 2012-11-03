@@ -11,12 +11,12 @@
   </welcome-file-list>
   <servlet>
     <description></description>
-    <display-name>MultiServlet</display-name>
-    <servlet-name>MultiServlet</servlet-name>
-    <servlet-class>gti785.multi.MultiServlet</servlet-class>
+    <display-name>ManETS_ServerServlet</display-name>
+    <servlet-name>ManETS_ServerServlet</servlet-name>
+    <servlet-class>gti785.multi.ManETS_ServerServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>MultiServlet</servlet-name>
-    <url-pattern>/MultiServlet</url-pattern>
+    <servlet-name>ManETS_ServerServlet</servlet-name>
+    <url-pattern>/ManETS_ServerServlet</url-pattern>
   </servlet-mapping>
 </web-app>

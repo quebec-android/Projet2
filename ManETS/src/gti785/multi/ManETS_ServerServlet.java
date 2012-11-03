@@ -17,34 +17,35 @@ import com.sun.jna.NativeLibrary;
  */
 public class ManETS_ServerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	private ETSRemote remote;
     /**
      * Default constructor. 
      */
     public ManETS_ServerServlet() {
-    	NativeLibrary.addSearchPath(
-		RuntimeUtil.getLibVlcLibraryName(), "/Applications/VLC.app/Contents/MacOS"//"EMPLACEMENT DU DOSSIER QUI CONTIENT libvlc"
-		);
-		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
+    	remote = new ETSRemote();
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String command = request.getParameter("command");
+		response.getWriter().write("Remote server online");
 		
-		if(command.equals("getList")){
+		String command = null;
+		command = request.getParameter("command");
+		
+		if(command != null && command.equals("getList")){
 			
 		}
 		
-		if(command.equals("play")){
+		if(command != null && command.equals("play")){
 			
 		}
 		
-		if(command.equals("play")){
+		if(command != null && command.equals("pause")){
 			
 		}
+		
 	}
 
 	/**
