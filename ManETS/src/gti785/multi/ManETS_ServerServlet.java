@@ -33,14 +33,12 @@ public class ManETS_ServerServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().write("Remote server online");
-		
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		String command = null;
 		command = request.getParameter("command");
 		
 		if(command != null && command.equals("getList")){
-			mediaFolder.print();
+			mediaFolder.print(response);
 		}
 		
 		if(command != null && command.equals("play")){
@@ -49,10 +47,14 @@ public class ManETS_ServerServlet extends HttpServlet {
 			mrl = request.getParameter("option");
 			if( mrl != null)
 				mrl = dossier+mrl;
-			if(remote.play(mrl))
+			if(remote.play(mrl)){
 				System.out.println("Song in play");
-			else
+				response.setStatus(HttpServletResponse.SC_OK);
+			}
+			else{
 				System.out.println("Error while trying to play song.");
+				response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED); 
+			}
 		}
 		
 		if(command != null && command.equals("pause")){
@@ -71,7 +73,7 @@ public class ManETS_ServerServlet extends HttpServlet {
 			if( media != null ){
 				String mrl = dossier+media;
 				remote.playListAdd(mrl);
-				remote.printPlayList();
+				remote.printPlayList(response);
 			}
 		}
 		
@@ -80,8 +82,16 @@ public class ManETS_ServerServlet extends HttpServlet {
 			index = Integer.parseInt(request.getParameter("option"));
 			if( index >= 0 ){
 				remote.playListRemove(index);
-				remote.printPlayList();
+				remote.printPlayList(response);
 			}
+		}
+		
+		if(command!=null && command.equals("next")){
+			remote.next();
+		}
+		
+		if(command!=null && command.equals("previous")){
+			remote.previous();
 		}
 	}
 

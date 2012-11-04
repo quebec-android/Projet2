@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -25,15 +27,19 @@ public class MediaFolder {
 		}
 	}
 	
-	public void print(){
+	public void print(HttpServletResponse response){
 		for(File file:files){
 			try {
 				AudioFile f = AudioFileIO.read(new File(file.toString()));
 				Tag tag = f.getTag();
-				String id = tag.getFirst(FieldKey.MUSICBRAINZ_TRACK_ID);
+				String artist = tag.getFirst(FieldKey.ARTIST);
+				String album = tag.getFirst(FieldKey.ALBUM);
+				String title = tag.getFirst(FieldKey.TITLE);
+				String composer = tag.getFirst(FieldKey.COMPOSER);
+				String genre = tag.getFirst(FieldKey.GENRE);
 				
-				System.out.println(file.toString());
-				
+				//System.out.println("Album: "+album+" Artist: "+artist+" Title: "+title);
+				response.getWriter().write("Album: "+album+" Artist: "+artist+" Title: "+title);
 			} catch (CannotReadException e) {
 				System.out.println("Impossible de lire le fichier");
 				e.printStackTrace();

@@ -1,6 +1,9 @@
 package gti785.multi;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.medialist.MediaList;
@@ -50,11 +53,11 @@ public class ETSRemote {
 	}
 	
 	public void next(){
-		MediaPlayer.nextChapter();
+		
 	}
 	
 	public void previous(){
-		MediaPlayer.previousChapter();
+		
 	}
 	
 	public void shuffle(){
@@ -76,10 +79,11 @@ public class ETSRemote {
 		mediaList.removeMedia(index);
 	}
 	
-	public void printPlayList(){
+	public void printPlayList(HttpServletResponse response) throws IOException{
 		System.out.println("Play-list:");
 		for( MediaListItem item:mediaList.items() ){
 			System.out.println(item.name());
+			response.getWriter().write(item.name());
 		}
 	}
 }
