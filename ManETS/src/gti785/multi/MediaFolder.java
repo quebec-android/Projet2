@@ -3,7 +3,9 @@ package gti785.multi;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,20 +19,23 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 
 public class MediaFolder {
-	private static List<File> files = new ArrayList<File>();
+	private static Map<Integer,File> files = new HashMap<Integer,File>();
 	private File _folder;
 	
 	public MediaFolder(File folder){
 		_folder = folder;
+		int i = 1;
 		for(File file: _folder.listFiles()){
-			files.add(file);
+			files.put(i,file);
+			i++;
 		}
 	}
 	
 	public void print(HttpServletResponse response){
-		for(File file:files){
+		for(int mapKey: files.keySet()){
 			try {
-				AudioFile f = AudioFileIO.read(new File(file.toString()));
+				AudioFile f = AudioFileIO.read(new File(files.get(mapKey).toString()));
+				
 				Tag tag = f.getTag();
 				String artist = tag.getFirst(FieldKey.ARTIST);
 				String album = tag.getFirst(FieldKey.ALBUM);
@@ -57,5 +62,18 @@ public class MediaFolder {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * GETTERS and SETTERS
+	 * 
+	 * @return
+	 */
+	public static Map<Integer, File> getFiles() {
+		return files;
+	}
+
+	public static void setFiles(Map<Integer, File> files) {
+		MediaFolder.files = files;
 	}
 }

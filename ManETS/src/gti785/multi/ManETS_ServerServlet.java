@@ -19,15 +19,20 @@ import com.sun.jna.NativeLibrary;
 public class ManETS_ServerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ETSRemote remote;
-	String dossier = "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Media/";
+	private String dossier = "C:/Users/Fab/Music/Oasis";
+	/*
+	 * fabien "C:/Users/Fab/Music/Oasis"
+	 * cedric "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Media/"
+	 * 
+	 */
 	MediaFolder mediaFolder;
 	
     /**
      * Default constructor. 
      */
     public ManETS_ServerServlet() {
-    	remote = new ETSRemote();
     	mediaFolder = new MediaFolder(new File(dossier));
+    	remote = new ETSRemote(mediaFolder);
     }
 
 	/**
@@ -42,12 +47,13 @@ public class ManETS_ServerServlet extends HttpServlet {
 		}
 		
 		if(command != null && command.equals("play")){
-			//String mrl = dossier+"01 wildlife analysis.mp3";
-			String mrl = null;
-			mrl = request.getParameter("option");
-			if( mrl != null)
-				mrl = dossier+mrl;
-			if(remote.play(mrl)){
+			String id = null;
+			id = request.getParameter("option");
+			int idSong = -1;
+			if (id != null) {
+				idSong = Integer.parseInt(id);
+			}
+			if(remote.play(idSong)){
 				System.out.println("Song in play");
 				response.setStatus(HttpServletResponse.SC_OK);
 			}
