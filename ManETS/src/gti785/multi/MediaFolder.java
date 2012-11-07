@@ -2,6 +2,7 @@ package gti785.multi;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +19,35 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
+/**
+ * Le MediaFolder permet de g屍er les m仕ias du dossier multim仕ia.
+ * 
+ * @author Cedric
+ *
+ */
 public class MediaFolder {
-	private static Map<Integer,Media> files = new HashMap<Integer,Media>();
+	//private static Map<Integer,Media> files = new HashMap<Integer,Media>();
+	private static List<Media> files = new ArrayList();
 	private File _folder;
+	private static final XStream xstream = new XStream(new DomDriver());
 	
+	// Configuration de XStream
+	static {
+		xstream.setMode(XStream.NO_REFERENCES);
+		xstream.alias("song", Media.class);
+		xstream.alias("list", List.class);
+	}
+	
+	/**
+	 * Constructeur, remplit la liste files avec tous les m仕ias du dossier
+	 * multim仕ia.
+	 * 
+	 * @param folder
+	 */
 	public MediaFolder(File folder){
 		_folder = folder;
 		int i = 1;
@@ -33,12 +59,14 @@ public class MediaFolder {
 				f = AudioFileIO.read(new File(file.toString()));
 				Tag tag = f.getTag();
 				String album = tag.getFirst(FieldKey.ALBUM);
-				String title = tag.getFirst(FieldKey.TITLE);
+				String poster = tag.getFirst(FieldKey.COVER_ART);
 				String length = null;
 				String mrl = file.toString();
+				String[] title = mrl.split("/");
 				
-				Media media = new Media(i, title, album, length, mrl);
-				files.put(i,media);
+				Media media = new Media(i, title[title.length-1], album, length, mrl, poster);
+				//files.put(i,media);
+				files.add(media);
 				i++;
 			}
 		
@@ -60,18 +88,25 @@ public class MediaFolder {
 		}
 	}
 	
+	/**
+	 * Envoi la liste des m仕ias sous forme XML.
+	 * @param response
+	 */
 	public void print(HttpServletResponse response){
-		for(int mapKey: files.keySet()){
-			Media media = files.get(mapKey);
+		
+		//for(int mapKey: files.keySet()){
+			//Media media = files.get(mapKey);
 			//System.out.println("Album: "+album+" Artist: "+artist+" Title: "+title);
-			try {
-				response.getWriter().write("Album: "+media.getAlbum()+" Artist: "+media.getTitle());
+			
+			try {				
+				PrintWriter out = response.getWriter();
+				out.write(xstream.toXML(files));
 			} catch (IOException e) {
 				System.out.println("Error while writing file list");
 				e.printStackTrace();
 			}
 			
-		}
+		//}
 	}
 	
 	/**
@@ -79,11 +114,11 @@ public class MediaFolder {
 	 * 
 	 * @return
 	 */
-	public static Map<Integer, Media> getFiles() {
+	public static List<Media> getFiles() {
 		return files;
 	}
 
-	public static void setFiles(Map<Integer, Media> files) {
+	public static void setFiles(List<Media> files) {
 		MediaFolder.files = files;
 	}
 }
