@@ -24,6 +24,7 @@ public class ETSRemote {
 		RuntimeUtil.getLibVlcLibraryName(), "/Applications/VLC.app/Contents/MacOS/lib"//"EMPLACEMENT DU DOSSIER QUI CONTIENT libvlc"
 		);
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
+		
 		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
 		MediaPlayer = mediaPlayerFactory.newHeadlessMediaPlayer();
 		mediaList =  mediaPlayerFactory.newMediaList();
@@ -34,7 +35,7 @@ public class ETSRemote {
 	 * if param set to null, plays first item in play list
 	 * else plays the mrl passed as argument
 	 * @param mrl
-	 * @return
+	 * @return boolean
 	 */
 	public boolean play(String mrl){
 		if( mrl == null ){
