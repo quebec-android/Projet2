@@ -1,5 +1,6 @@
 package gti785.multi;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,6 +32,7 @@ public class MediaFolder {
 	private static List<Media> files = new ArrayList();
 	private File _folder;
 	private static final XStream xstream = new XStream(new DomDriver());
+	private ArtworkFolder artwork;
 	
 	// Configuration de XStream
 	static {
@@ -45,8 +47,10 @@ public class MediaFolder {
 	 * 
 	 * @param folder
 	 */
-	public MediaFolder(File folder){
+	public MediaFolder(File folder, ArtworkFolder artwork){
 		_folder = folder;
+		this.artwork = artwork;
+		
 		int i = 1;
 		try {
 			
@@ -56,16 +60,21 @@ public class MediaFolder {
 				f = AudioFileIO.read(new File(file.toString()));
 				Tag tag = f.getTag();
 				String album = tag.getFirst(FieldKey.ALBUM);
-				String poster = tag.getFirst(FieldKey.COVER_ART);
+				String poster = i+".png";
 				String length = null;
 				String mrl = file.toString();
 				String[] title = mrl.split("/");
+				
+				BufferedImage img = (BufferedImage)tag.getFirstArtwork().getImage();
+				artwork.saveToFolder(img, String .valueOf(i));
 				
 				Media media = new Media(i, title[title.length-1], album, length, mrl, poster);
 				//files.put(i,media);
 				files.add(media);
 				i++;
 			}
+			
+			System.out.println("test:" + files.get(0).getTitle());
 		
 		} catch (CannotReadException e) {
 			System.out.println("Impossible de lire le fichier");

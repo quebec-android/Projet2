@@ -14,19 +14,21 @@ import javax.servlet.http.HttpServletResponse;
 public class ManETS_ServerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ETSRemote remote;
-	private String dossier = "C:/Users/Fab/Desktop/COURS/785/android/Projet2/music";
+	private String dossier = "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Media/";
+	private String dossierArtwork = "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Artwork/";
 	/*
 	 * fabien "C:\Users\Fab\Desktop\COURS\785\android\Projet2\music"
 	 * cedric "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Media/"
 	 * 
 	 */
-	MediaFolder mediaFolder;
-	
+	private MediaFolder mediaFolder;
+	private ArtworkFolder artwork;
     /**
      * Default constructor. 
      */
     public ManETS_ServerServlet() {
-    	mediaFolder = new MediaFolder(new File(dossier));
+    	artwork = new ArtworkFolder(new File(dossierArtwork));
+    	mediaFolder = new MediaFolder(new File(dossier), artwork);
     	remote = new ETSRemote(mediaFolder);
     }
 
