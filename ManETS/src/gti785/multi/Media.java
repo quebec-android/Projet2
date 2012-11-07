@@ -1,20 +1,41 @@
 package gti785.multi;
 
+/**
+ * La classe Media permet de stocker une chanson avec toutes les caractéristiques
+ * utilisées.
+ * @author Cedric
+ *
+ */
 public class Media {
 	private int songID;
 	private String title;
 	private String album;
 	private String length;
 	private String mrl;
+	private String poster;
 	
-	public Media(int songID, String title, String album, String length, String mrl){
+	/**
+	 * Constructeur par défaut
+	 * @param songID
+	 * @param title
+	 * @param album
+	 * @param length
+	 * @param mrl
+	 * @param poster
+	 */
+	public Media(int songID, String title, String album, String length, String mrl, String poster){
 		this.songID = songID;
 		this.title=title;
 		this.album = album;
 		this.length = length;
 		this.mrl = mrl;
+		this.poster = poster;
 	}
 
+	/**
+	 * GETTERS and SETTERS
+	 * @return
+	 */
 	public int getSongID() {
 		return songID;
 	}
@@ -53,6 +74,14 @@ public class Media {
 
 	public void setMrl(String mrl) {
 		this.mrl = mrl;
+	}
+
+	public String getPoster() {
+		return poster;
+	}
+
+	public void setPoster(String poster) {
+		this.poster = poster;
 	}
 	
 	
