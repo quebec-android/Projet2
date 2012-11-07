@@ -2,7 +2,6 @@ package gti785.multi;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,11 +9,10 @@ import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.medialist.MediaList;
 import uk.co.caprica.vlcj.medialist.MediaListItem;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.headless.HeadlessMediaPlayer;
 import uk.co.caprica.vlcj.player.list.MediaListPlayer;
 import uk.co.caprica.vlcj.player.list.MediaListPlayerMode;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
-import uk.co.caprica.vlcj.component.AudioMediaPlayerComponent;
+
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 
@@ -26,8 +24,7 @@ public class ETSRemote {
 	
 	public ETSRemote(MediaFolder mediaFolder){
 		this.mediaFolder=mediaFolder;
-		NativeLibrary.addSearchPath(
-		RuntimeUtil.getLibVlcLibraryName(), "C:/Program Files (x86)/VideoLAN/VLC/sdk/lib"
+		NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "C:\\Users\\"
 		/*
 		 * "EMPLACEMENT DU DOSSIER QUI CONTIENT libvlc"
 		 * fabien C:\Program Files (x86)\VideoLAN\VLC\sdk\lib
@@ -35,6 +32,7 @@ public class ETSRemote {
 		 */
 		);
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
+		
 		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
 		mediaPlayer = mediaPlayerFactory.newMediaListPlayer();
 		mediaList =  mediaPlayerFactory.newMediaList();
@@ -45,21 +43,18 @@ public class ETSRemote {
 	 * if param set to null, plays first item in play list
 	 * else plays the mrl passed as argument
 	 * @param mrl
-	 * @return
+	 * @return boolean
 	 */
-	public boolean play(int id){
-		if( id == -1 ){
-			if (random) {
-				
-			} else {
-				
-			}
-			List<MediaListItem> items = mediaList.items();
-			mrl = items.get(0).mrl();
+	public boolean play(int idPlaylist){
+		boolean status = false;
+		if( idPlaylist == -1 ){
+			mediaPlayer.play();
+			status=true;
 		} else {
-			
+			mediaPlayer.playItem(idPlaylist);
+			status=true;
 		}
-		return MediaPlayer.playMedia(mrl);
+		return status;
 	}
 	
 	public void pause(){
@@ -93,7 +88,7 @@ public class ETSRemote {
 	}
 	
 	public void playListAdd(int idSong){
-		mediaList.addMedia(mediaFolder.getFiles().get(idSong).getMlr());
+		mediaList.addMedia(mediaFolder.getFiles().get(idSong).getMrl());
 	}
 
 	public void playListRemove(int idPlaylist) {

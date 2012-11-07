@@ -2,16 +2,11 @@ package gti785.multi;
 
 import java.io.File;
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.runtime.RuntimeUtil;
-
-import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
 
 /**
  * Servlet implementation class MultiServlet
@@ -19,9 +14,9 @@ import com.sun.jna.NativeLibrary;
 public class ManETS_ServerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ETSRemote remote;
-	private String dossier = "C:/Users/Fab/Music/Oasis";
+	private String dossier = "C:/Users/Fab/Desktop/COURS/785/android/Projet2/music";
 	/*
-	 * fabien "C:/Users/Fab/Music/Oasis"
+	 * fabien "C:\Users\Fab\Desktop\COURS\785\android\Projet2\music"
 	 * cedric "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Media/"
 	 * 
 	 */
@@ -49,11 +44,11 @@ public class ManETS_ServerServlet extends HttpServlet {
 		if(command != null && command.equals("play")){
 			String id = null;
 			id = request.getParameter("option");
-			int idSong = -1;
+			int idPlaylist = -1;
 			if (id != null) {
-				idSong = Integer.parseInt(id);
+				idPlaylist = Integer.parseInt(id);
 			}
-			if(remote.play(idSong)){
+			if(remote.play(idPlaylist)){
 				System.out.println("Song in play");
 				response.setStatus(HttpServletResponse.SC_OK);
 			}
@@ -74,20 +69,19 @@ public class ManETS_ServerServlet extends HttpServlet {
 		}
 		
 		if(command != null && command.equals("playlistadd")){
-			String media = null;
-			media = request.getParameter("option");
-			if( media != null ){
-				String mrl = dossier+media;
-				remote.playListAdd(mrl);
+			String idSong = null;
+			idSong = request.getParameter("option");
+			if( idSong != null ){
+				remote.playListAdd(Integer.parseInt(idSong));
 				remote.printPlayList(response);
 			}
 		}
 		
 		if(command != null && command.equals("playlistremove")){
-			int index = -1;
-			index = Integer.parseInt(request.getParameter("option"));
-			if( index >= 0 ){
-				remote.playListRemove(index);
+			String idPlaylist = null;
+			idPlaylist = request.getParameter("option");
+			if( idPlaylist != null ){
+				remote.playListRemove(Integer.parseInt(idPlaylist));
 				remote.printPlayList(response);
 			}
 		}
