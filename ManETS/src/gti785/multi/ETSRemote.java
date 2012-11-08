@@ -1,7 +1,9 @@
 package gti785.multi;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,10 +17,11 @@ import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.thoughtworks.xstream.XStream;
 
 public class ETSRemote {
 	private MediaFolder mediaFolder;
-	private final MediaListPlayer mediaPlayer;
+	private MediaListPlayer mediaPlayer;
 	private MediaList mediaList;
 	private boolean random;
 	
@@ -46,15 +49,18 @@ public class ETSRemote {
 	 * @return boolean
 	 */
 	public boolean play(int idPlaylist){
-		boolean status = false;
+		
+		if( mediaList.size() < 1){
+			return false;
+		}
 		if( idPlaylist == -1 ){
 			mediaPlayer.play();
-			status=true;
+			return true;
 		} else {
 			mediaPlayer.playItem(idPlaylist);
-			status=true;
+			return true;
 		}
-		return status;
+
 	}
 	
 	public void pause(){
@@ -73,33 +79,56 @@ public class ETSRemote {
 		mediaPlayer.playPrevious();
 	}
 	
-	public void shuffle(){ //va changer les id ou pas ??
-		Collections.shuffle(mediaList.items());
+	public void shuffle(){
+		List<MediaListItem> mediaListForShuffle = mediaList.items();
+		Collections.shuffle(mediaListForShuffle);
+		mediaList.clear();
+		this.fillMediaList(mediaListForShuffle);
+		mediaPlayer.setMediaList(mediaList);
 	}
 	
-	public void repeat(String option){
+	public boolean repeat(String option){
 		if (option.equals("song")){
 			mediaPlayer.setMode(MediaListPlayerMode.REPEAT);
+			return true;
 		} else if (option.equals("playlist")) {
 			mediaPlayer.setMode(MediaListPlayerMode.LOOP);
+			return true;
 		} else if (option.equals("none")) {
 			mediaPlayer.setMode(MediaListPlayerMode.DEFAULT);
+			return true;
 		}
+		return false;
 	}
 	
-	public void playListAdd(int idSong){
-		mediaList.addMedia(mediaFolder.getFiles().get(idSong).getMrl());
+	public boolean playListAdd(int idSong){
+		if(MediaFolder.getFiles().size() > idSong && idSong > 0 ){
+			mediaList.addMedia(MediaFolder.getFiles().get(idSong).getMrl());
+			mediaPlayer.setMediaList(mediaList);
+			return true;
+		}
+		else
+			return false;
 	}
 
-	public void playListRemove(int idPlaylist) {
-		mediaList.removeMedia(idPlaylist);
+	public boolean playListRemove(int idPlaylist) {
+		if(mediaList.size() > idPlaylist){
+			mediaList.removeMedia(idPlaylist);
+			mediaPlayer.setMediaList(mediaList);
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	
-	public void printPlayList(HttpServletResponse response) throws IOException{
-		System.out.println("Play-list:");
-		for( MediaListItem item:mediaList.items() ){
-			System.out.println(item.name());
-			response.getWriter().write(item.name());
-		}
+	public void printPlayList(HttpServletResponse response, XStream xstream) throws IOException{
+		PrintWriter out = response.getWriter();
+		out.write(xstream.toXML(mediaList.items()));
+	}
+	
+	public void fillMediaList(List<MediaListItem> mediaListAdd){
+		for(MediaListItem media:mediaListAdd)
+			mediaList.addMedia(media.mrl());
 	}
 }

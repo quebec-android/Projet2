@@ -1,8 +1,8 @@
 package gti785.multi;
 
 /**
- * La classe Media permet de stocker une chanson avec toutes les caractéristiques
- * utilisées.
+ * La classe Media permet de stocker une chanson avec toutes les caract√©ristiques
+ * utilis√©es.
  * @author Cedric
  *
  */
@@ -15,7 +15,7 @@ public class Media {
 	private String poster;
 	
 	/**
-	 * Constructeur par défaut
+	 * Constructeur par d√©faut
 	 * @param songID
 	 * @param title
 	 * @param album

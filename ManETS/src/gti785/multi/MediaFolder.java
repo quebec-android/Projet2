@@ -22,7 +22,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
- * Le MediaFolder permet de g屍er les m仕ias du dossier multim仕ia.
+ * Le MediaFolder permet de gﾃｩrer les mﾃｩdias du dossier multimﾃｩdia.
  * 
  * @author Cedric
  *
@@ -31,19 +31,11 @@ public class MediaFolder {
 	//private static Map<Integer,Media> files = new HashMap<Integer,Media>();
 	private static List<Media> files = new ArrayList();
 	private File _folder;
-	private static final XStream xstream = new XStream(new DomDriver());
 	private ArtworkFolder artwork;
 	
-	// Configuration de XStream
-	static {
-		xstream.setMode(XStream.NO_REFERENCES);
-		xstream.alias("song", Media.class);
-		xstream.alias("list", List.class);
-	}
-	
 	/**
-	 * Constructeur, remplit la liste files avec tous les m仕ias du dossier
-	 * multim仕ia.
+	 * Constructeur, remplit la liste files avec tous les mﾃｩdias du dossier
+	 * multimﾃｩdia.
 	 * 
 	 * @param folder
 	 */
@@ -65,11 +57,11 @@ public class MediaFolder {
 				String mrl = file.toString();
 				String[] title = mrl.split("/");
 				
-				BufferedImage img = (BufferedImage)tag.getFirstArtwork().getImage();
+				BufferedImage img = (BufferedImage)tag.getFirstArtwork().getImage();//essayer d'ﾃｩviter de crﾃｩer pusieurs fois le mﾃｪme art pour des chansons du mﾃｪme album
 				artwork.saveToFolder(img, String .valueOf(i));
 				
 				Media media = new Media(i, title[title.length-1], album, length, mrl, poster);
-				//files.put(i,media);
+
 				files.add(media);
 				i++;
 			}
@@ -78,41 +70,34 @@ public class MediaFolder {
 		
 		} catch (CannotReadException e) {
 			System.out.println("Impossible de lire le fichier");
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("Erreur dans la lecture du fichier");
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (TagException e) {
 			System.out.println("Erreur dans le tag du fichier");
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (ReadOnlyFileException e) {
 			System.out.println("Erreur: fichier en lecture seule.");
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (InvalidAudioFrameException e) {
 			System.out.println("Frame audio invalide.");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Envoi la liste des m仕ias sous forme XML.
+	 * Envoi la liste des mﾃｩdias sous forme XML.
 	 * @param response
 	 */
-	public void print(HttpServletResponse response){
-		
-		//for(int mapKey: files.keySet()){
-			//Media media = files.get(mapKey);
-			//System.out.println("Album: "+album+" Artist: "+artist+" Title: "+title);
-			
-			try {				
-				PrintWriter out = response.getWriter();
-				out.write(xstream.toXML(files));
-			} catch (IOException e) {
-				System.out.println("Error while writing file list");
-				e.printStackTrace();
-			}
-			
-		//}
+	public void print(HttpServletResponse response, XStream xstream){
+		try {				
+			PrintWriter out = response.getWriter();
+			out.write(xstream.toXML(files));
+		} catch (IOException e) {
+			System.out.println("Error while writing file list");
+			//e.printStackTrace();
+		}
 	}
 	
 	/**

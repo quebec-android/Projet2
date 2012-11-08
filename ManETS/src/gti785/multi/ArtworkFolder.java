@@ -28,7 +28,4 @@ public class ArtworkFolder {
 		return false;
 	}
 	
-	public boolean getFormFolder(int imgID){
-		return false;
-	}
 }
