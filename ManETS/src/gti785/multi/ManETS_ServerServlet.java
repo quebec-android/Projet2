@@ -26,7 +26,7 @@ public class ManETS_ServerServlet extends HttpServlet {
 	 * cedric "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Media/"
 	 * 
 	 */
-	private String dossierImage = "Artwork/";
+	private String dossierImage = "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Projet2/ManETS/WebContent/Artwork";
 	private MediaFolder mediaFolder;
 	private ArtworkFolder artwork;
 	
@@ -45,7 +45,6 @@ public class ManETS_ServerServlet extends HttpServlet {
      */
     public ManETS_ServerServlet() {
     	artwork = new ArtworkFolder(new File(dossierImage));
-
     	mediaFolder = new MediaFolder(new File(dossier), artwork);
     	remote = new ETSRemote(mediaFolder);
     }

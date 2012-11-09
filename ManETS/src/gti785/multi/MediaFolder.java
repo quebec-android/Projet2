@@ -52,13 +52,15 @@ public class MediaFolder {
 				f = AudioFileIO.read(new File(file.toString()));
 				Tag tag = f.getTag();
 				String album = tag.getFirst(FieldKey.ALBUM);
-				String poster = i+".png";
+				String poster = "http://localhost:8080/ManETS/Artwork/"+album+".png";
 				String length = null;
 				String mrl = file.toString();
 				String[] title = mrl.split("/");
 				
-				BufferedImage img = (BufferedImage)tag.getFirstArtwork().getImage();//essayer d'éviter de créer pusieurs fois le même art pour des chansons du même album
-				artwork.saveToFolder(img, String .valueOf(i));
+				if(!artwork.imageExist(album)){
+					BufferedImage img = (BufferedImage)tag.getFirstArtwork().getImage();
+					artwork.saveToFolder(img, album);//gérer if album = null
+				}
 				
 				Media media = new Media(i, title[title.length-1], album, length, mrl, poster);
 
