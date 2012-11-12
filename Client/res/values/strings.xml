@@ -1,0 +1,17 @@
+<resources>
+
+    <string name="app_name">Client</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+	
+	<string name="play">Play</string>
+	<string name="stop">Stop</string>
+	<string name="next">Next</string>
+	<string name="previous">Previous</string>
+	<string name="toBeginning">toBeginning</string>
+	
+	<string name="server">ManETS/ManETS_ServerServlet</string>
+	<string name="pref_port">8080</string>
+	<string name="pref_port_summ">It\'s the port which will be used to connect to the server</string>
+</resources>
