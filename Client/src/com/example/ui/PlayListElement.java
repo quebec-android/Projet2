@@ -47,7 +47,7 @@ public class PlayListElement extends TextView {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		// Color as paper
-		canvas.drawColor(paperColor);
+		//canvas.drawColor(paperColor);
 		
 		// Draw ruled lines //start x, start y, end x, end y
 		canvas.drawLine(0, 0, getMeasuredWidth(), 0, linePaint); //vertical lign top

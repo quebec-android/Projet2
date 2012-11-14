@@ -5,3 +5,13 @@
 ManETS/WebContent/WEB-INF/.DS_Store
 
 ManETS/WebContent/WEB-INF/lib/.DS_Store
+
+Client/bin/*
+
+Client/bin/classes.dex
+
+Client/bin/com.example.client.MainActivity.apk
+
+Client/bin/resources.ap_
+
+Client/src/com/example/client/.DS_Store
