@@ -93,6 +93,7 @@ public class ManETS_ServerServlet extends HttpServlet {
 		else if(command != null && command.equals("playlistadd")){
 			String idSong = null;
 			idSong = request.getParameter("option");
+			System.out.println("Received parameters: " + idSong);
 			if( idSong != null ){
 				if(remote.playListAdd(Integer.parseInt(idSong)))
 					remote.printPlayList(response, xstream);
@@ -154,6 +155,10 @@ public class ManETS_ServerServlet extends HttpServlet {
 				error = true;
 				errorMessage = "Repeat mode: no option";
 			}
+		}
+		
+		else if(command != null && command.equals("GetPlayList")){
+			remote.printPlayList(response, xstream);
 		}
 		
 		else{

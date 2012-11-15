@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,7 +21,6 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
  * Le MediaFolder permet de gérer les médias du dossier multimédia.
@@ -28,7 +29,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  *
  */
 public class MediaFolder {
-	//private static Map<Integer,Media> files = new HashMap<Integer,Media>();
+	private static Map<Integer,Media> filesh = new HashMap<Integer,Media>();
 	private static List<Media> files = new ArrayList();
 	private File _folder;
 	private ArtworkFolder artwork;

@@ -28,14 +28,14 @@ public class StackOverflowXmlParser {
 	private List<Song> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
 	    List<Song> song = new ArrayList<Song>();
 
-	    parser.require(XmlPullParser.START_TAG, ns, "feed");
+	    parser.require(XmlPullParser.START_TAG, ns, "list");
 	    while (parser.next() != XmlPullParser.END_TAG) {
 	        if (parser.getEventType() != XmlPullParser.START_TAG) {
 	            continue;
 	        }
 	        String name = parser.getName();
 	        // Starts by looking for the entry tag
-	        if (name.equals("entry")) {
+	        if (name.equals("song")) {
 	            song.add(readEntry(parser));
 	        } else {
 	            skip(parser);
@@ -47,10 +47,11 @@ public class StackOverflowXmlParser {
 	// Parses the contents of an entry. If it encounters a title, summary, or link tag, hands them off
 	// to their respective "read" methods for processing. Otherwise, skips the tag.
 	private Song readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
-		parser.require(XmlPullParser.START_TAG, ns, "list");
+		//parser.require(XmlPullParser.START_TAG, ns, "list");
 		String title = null;
 		String album = null;
-
+		int id = 0;
+		
 		while (parser.next() != XmlPullParser.END_TAG) {
 			if (parser.getEventType() != XmlPullParser.START_TAG) {
 				continue;
@@ -60,11 +61,13 @@ public class StackOverflowXmlParser {
 				title = readTitle(parser);
 			} else if (name.equals("album")) {
 				album = readAlbum(parser);
+			} else if (name.equals("songID")){
+				id = readSongID(parser);//Integer.parseInt(readTitle(parser));
 			} else {
 				skip(parser);
 			}
 		}
-		return new Song(title, album);
+		return new Song(title, album, id);
 	}
 
 	// Processes title tags in the feed.
@@ -88,6 +91,15 @@ public class StackOverflowXmlParser {
 		String result = "";
 		if (parser.next() == XmlPullParser.TEXT) {
 			result = parser.getText();
+			parser.nextTag();
+		}
+		return result;
+	}
+	
+	private int readSongID(XmlPullParser parser) throws IOException, XmlPullParserException {
+		int result = 0;
+		if (parser.next() == XmlPullParser.TEXT) {
+			result = Integer.parseInt(parser.getText());
 			parser.nextTag();
 		}
 		return result;

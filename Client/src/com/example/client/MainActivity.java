@@ -18,12 +18,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import com.example.ui.PlayListElement;
 
 public class MainActivity extends Activity {
 
@@ -131,7 +127,8 @@ public class MainActivity extends Activity {
 	//};
 
 	public void playlist_eventlistener(View v){
-		Log.d("test","playlist");
+		int id = v.getId();
+		Utils.getUrl("playlistadd&option="+id,connMgr);
 	}
 
 	public void getXML(String command, ConnectivityManager connMgr){
@@ -162,23 +159,29 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(List<Song> result) {  
-			//setContentView(R.layout.main);
-			// Displays the HTML string in the UI via a WebView
-			//WebView myWebView = (WebView) findViewById(R.id.webview);
-			//myWebView.loadData(result, "text/html", null);
-			ListView lv = new ListView(that);
-
-			List<String> songs = new ArrayList<String>();
-			//String[] songs = new String[] {"Title1", "Title2", "Title3","Title1", "Title2", "Title3","Title1", "Title2", "Title3","Title1", "Title2", "Title3","Title1", "Title2", "Title3",
-					//"Title1", "Title2", "Title3","Title1", "Title2", "Title3","Title1", "Title2", "Title3","Title1", "Title2", "Title3","Title1", "Title2", "Title3"};
-			for(Song title: result){
-				songs.add(title.title);
+			if(result != null){
+			
+				ListView lv = new ListView(that);
+	
+				List<String> songs = new ArrayList<String>();
+				
+				LinearLayout rl = (LinearLayout) findViewById(R.id.playList_container);
+				for(Song title: result){
+					songs.add(title.title);
+					//PlayListElement myView = new PlayListElement(that);
+					//myView.setId(title.getId());
+					//myView.setText(title.getTitle());
+					//myView.setPadding(10, 10, 0, 10);
+					//myView.setClickable(true);
+					//rl.addView(myView);
+				}
+				//final ArrayAdapter<String> aa = new ArrayAdapter<String>(that, R.layout.playlist_song, songs);
+				SongAdapter aa = new SongAdapter(that,R.layout.playlist_song,result);
+				lv.setAdapter(aa);
+	
+				rl.addView(lv);
+				
 			}
-			final ArrayAdapter<String> aa = new ArrayAdapter<String>(that, R.layout.playlist_song, songs);
-			lv.setAdapter(aa);
-
-			LinearLayout rl = (LinearLayout) findViewById(R.id.playList_container);
-			rl.addView(lv);
 
 		}
 
