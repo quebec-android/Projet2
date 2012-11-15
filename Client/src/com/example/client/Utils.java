@@ -33,4 +33,16 @@ public class Utils {
          	//textView.setText("No network connection available.");
          }
 	}
+	
+	public static void getXML(String command, ConnectivityManager connMgr){
+		String stringUrl = Const.GET+""+command;
+		
+		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if( networkInfo != null && networkInfo.isConnected() ){
+        	//new DownloadXmlTask().execute(stringUrl);
+        }
+        else{
+        	
+        }
+	}
 }	

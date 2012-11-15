@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.ui.PlayListElement
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="10dp"
+	android:scrollbars="vertical"
+	android:textColor="@color/playList_textcolor"
+	android:clickable="true"
+	android:onClick="playlist_eventlistener"
+	android:background="@android:drawable/list_selector_background"
+/>

@@ -102,8 +102,8 @@ public class ETSRemote {
 	}
 	
 	public boolean playListAdd(int idSong){
-		if(MediaFolder.getFiles().size() > idSong && idSong > 0 ){
-			mediaList.addMedia(MediaFolder.getFiles().get(idSong).getMrl());
+		if(MediaFolder.getFiles().size() >= idSong && idSong > 0 ){
+			mediaList.addMedia(MediaFolder.getFiles().get(idSong-1).getMrl());
 			mediaPlayer.setMediaList(mediaList);
 			return true;
 		}
