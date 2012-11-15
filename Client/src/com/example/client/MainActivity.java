@@ -18,7 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewParent;
 import android.widget.ListView;
 
 public class MainActivity extends Activity {
@@ -26,37 +26,25 @@ public class MainActivity extends Activity {
 	//private HttpURLConnection connection = null;
 	ConnectivityManager connMgr;
 	MainActivity that;
-	/*private Button play = null;
-	private Button next = null; 
-	private Button previous = null; 
-	private Button stop = null; 
-	private Button toBeginning = null;*/
-
+	List<Song> songs;
+	List<Song> playlist;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		that = this;
-		/*play = (Button)findViewById(R.id.play);
-        play.setOnClickListener(playListener);
-
-        next = (Button)findViewById(R.id.next);
-        next.setOnClickListener(nextListener);
-
-        previous = (Button)findViewById(R.id.previous);
-        previous.setOnClickListener(previousListener);
-
-        stop = (Button)findViewById(R.id.stop);
-        stop.setOnClickListener(stopListener);
-
-        toBeginning = (Button)findViewById(R.id.toBeginning);
-        toBeginning.setOnClickListener(toBeginningListener);*/
-
+		songs = new ArrayList<Song>();
+		playlist = new ArrayList<Song>();
+		
 		connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		//LinearLayout rl2 = (LinearLayout) findViewById(R.id.files);
-		//rl2.addView(lv);
+		
+		List<Song>result = new ArrayList<Song>();
+		ListView lv = (ListView) findViewById(R.id.playlist_listview);
+		//LinearLayout rl = (LinearLayout) findViewById(R.id.playList_container);
+		SongAdapter aa = new SongAdapter(this,R.layout.playlist_song,result);
+		lv.setAdapter(aa);
+		
 		getXML("getList",connMgr);
 	}
 
@@ -66,9 +54,7 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	// Play
-	// private OnClickListener playListener = new OnClickListener() {
-	//@Override
+
 	public void playListener(View v) {
 		Log.d("ManETS","PLAY!!");
 		try{
@@ -81,11 +67,7 @@ public class MainActivity extends Activity {
 			Log.d("ManETS","Exception : echec dans la connexion");
 		}
 	}
-	// };
 
-	// Next
-	// private OnClickListener nextListener = new OnClickListener() {
-	//   @Override
 	public void nextListener(View v) {
 		Log.d("ManETS","NEXT!!");
 		try{
@@ -98,37 +80,52 @@ public class MainActivity extends Activity {
 			Log.d("ManETS",e.getMessage());
 		}
 	}
-	//   };
 
-	// Previous
-	//private OnClickListener previousListener = new OnClickListener() {
-	//@Override
 	public void previousListener(View v) {
 		Log.d("ManETS","PREVIOUS!!");
 		Utils.getUrl("previous",connMgr);
 	}
-	//};
 
-	// Stop
-	//private OnClickListener stopListener = new OnClickListener() {
-	//  @Override
+	
 	public void stopListener(View v) {
 		Log.d("ManETS","STOP!!");
 		Utils.getUrl("stop",connMgr);
 	}
-	//};
 
-	// Play
-	// private OnClickListener toBeginningListener = new OnClickListener() {
-	//   @Override
 	public void toBeginningListener(View v) {
 		Log.d("ManETS","toBeginning!!");
 	}
-	//};
-
+	
 	public void playlist_eventlistener(View v){
-		int id = v.getId();
-		Utils.getUrl("playlistadd&option="+id,connMgr);
+		View parent = (View) v.getParent();
+		
+		int parentID = parent.getId();
+		if(parentID == R.id.files_listview){//add song to play list
+			int id = v.getId();
+			Utils.getUrl("playlistadd&option="+id,connMgr);
+			
+			
+			ListView lv2 = (ListView) findViewById(R.id.playlist_listview);
+			SongAdapter ab = (SongAdapter) lv2.getAdapter();
+			
+			Song song = new Song(songs.get(id-1));
+			if( playlist.isEmpty())
+				song.id = 0;
+			else
+				song.id = playlist.size();
+			
+			playlist.add(song);
+			
+			ab.add(song);
+			lv2.setAdapter(ab);
+		}
+		else if( parentID == R.id.playlist_listview) {//play song from playlist
+			int id = v.getId();
+			Utils.getUrl("play&option="+id,connMgr);
+		}
+		
+		
+		
 	}
 
 	public void getXML(String command, ConnectivityManager connMgr){
@@ -161,25 +158,13 @@ public class MainActivity extends Activity {
 		protected void onPostExecute(List<Song> result) {  
 			if(result != null){
 			
-				ListView lv = new ListView(that);
-	
-				List<String> songs = new ArrayList<String>();
-				
-				LinearLayout rl = (LinearLayout) findViewById(R.id.playList_container);
-				for(Song title: result){
-					songs.add(title.title);
-					//PlayListElement myView = new PlayListElement(that);
-					//myView.setId(title.getId());
-					//myView.setText(title.getTitle());
-					//myView.setPadding(10, 10, 0, 10);
-					//myView.setClickable(true);
-					//rl.addView(myView);
-				}
-				//final ArrayAdapter<String> aa = new ArrayAdapter<String>(that, R.layout.playlist_song, songs);
+				ListView lv =(ListView) findViewById(R.id.files_listview);
+				//LinearLayout rl = (LinearLayout) findViewById(R.id.files_container);
 				SongAdapter aa = new SongAdapter(that,R.layout.playlist_song,result);
 				lv.setAdapter(aa);
-	
-				rl.addView(lv);
+				songs = result;
+				
+				//rl.addView(lv);
 				
 			}
 

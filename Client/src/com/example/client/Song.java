@@ -1,10 +1,15 @@
 package com.example.client;
 
 public class Song {
-	public final String title;
-    public final String album;
-    public final int id;
+	public String title;
+    public String album;
+    public int id;
     
+    public Song(Song song){
+    	this.title = song.getTitle();
+        this.album = song.getAlbum();
+        this.id = song.getId();
+    }
     public Song(String title, String album, int id) {
         this.title = title;
         this.album = album;
@@ -22,6 +27,7 @@ public class Song {
 	public int getId() {
 		return id;
 	}
+
     
     
 }

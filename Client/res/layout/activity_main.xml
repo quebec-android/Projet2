@@ -11,6 +11,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
+		<ListView
+		    android:id="@+id/playlist_listview"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content" >
+		    
+		</ListView>
     </LinearLayout>
     
     <RelativeLayout
@@ -89,9 +95,14 @@
     <LinearLayout 
         android:layout_width="200dp"
         android:layout_height="match_parent"
-        android:id="@+id/files"
+        android:id="@+id/files_container"
         android:orientation="vertical">
-	    
+	    <ListView 
+		    android:id="@+id/files_listview"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content">
+		    
+		</ListView>
     </LinearLayout>
 
 </LinearLayout>
