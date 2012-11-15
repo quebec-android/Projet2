@@ -23,7 +23,9 @@ public class DownloadWebpage extends AsyncTask<String,Object,String> {
 			return downloadUrl(urls[0]);
 		}
 		catch(IOException e){
+			Log.d("ManETS","Exception : unable to retrieve web page.");
 			return "unable to retrieve web page.";
+			
 		}
 	}
 	

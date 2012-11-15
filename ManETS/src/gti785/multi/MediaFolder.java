@@ -49,24 +49,29 @@ public class MediaFolder {
 			
 			for(File file: _folder.listFiles()){
 				AudioFile f;
+				String filename = file.toString();
 				
-				f = AudioFileIO.read(new File(file.toString()));
-				Tag tag = f.getTag();
-				String album = tag.getFirst(FieldKey.ALBUM);
-				String poster = "http://localhost:8080/ManETS/Artwork/"+album+".png";
-				String length = null;
-				String mrl = file.toString();
-				String[] title = mrl.split("/");
-				
-				if(!artwork.imageExist(album)){
-					BufferedImage img = (BufferedImage)tag.getFirstArtwork().getImage();
-					artwork.saveToFolder(img, album);//gérer if album = null
+				if( checkMP3(filename)){
+					
+					f = AudioFileIO.read(new File(filename));
+					Tag tag = f.getTag();
+					String album = tag.getFirst(FieldKey.ALBUM);
+					String poster = "http://localhost:8080/ManETS/Artwork/"+album+".png";
+					String length = null;
+					String mrl = file.toString();
+					String[] title = mrl.split("/");
+					
+					/*if(!artwork.imageExist(album)){
+						BufferedImage img = (BufferedImage)tag.getFirstArtwork().getImage(); //error if no artwork
+						//if( img != null)
+							artwork.saveToFolder(img, album);//gérer if album = null
+					}*/
+					//mettre image par def
+					Media media = new Media(i, title[title.length-1], album, length, mrl, poster);
+	
+					files.add(media);
+					i++;
 				}
-				
-				Media media = new Media(i, title[title.length-1], album, length, mrl, poster);
-
-				files.add(media);
-				i++;
 			}
 			
 			System.out.println("test:" + files.get(0).getTitle());
@@ -89,6 +94,12 @@ public class MediaFolder {
 		}
 	}
 	
+	private boolean checkMP3(String filename) {
+		int pos = filename.lastIndexOf(".");
+		String extension = filename.substring(pos);
+		return extension.equals(".mp3") || extension.equals(".m4a");
+	}
+
 	/**
 	 * Envoi la liste des médias sous forme XML.
 	 * @param response

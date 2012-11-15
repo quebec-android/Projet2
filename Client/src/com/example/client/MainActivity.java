@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.ListView;
 
 public class MainActivity extends Activity {
@@ -39,9 +38,9 @@ public class MainActivity extends Activity {
 		
 		connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		
+		//create playlist view
 		List<Song>result = new ArrayList<Song>();
 		ListView lv = (ListView) findViewById(R.id.playlist_listview);
-		//LinearLayout rl = (LinearLayout) findViewById(R.id.playList_container);
 		SongAdapter aa = new SongAdapter(this,R.layout.playlist_song,result);
 		lv.setAdapter(aa);
 		
@@ -58,9 +57,6 @@ public class MainActivity extends Activity {
 	public void playListener(View v) {
 		Log.d("ManETS","PLAY!!");
 		try{
-			//Utils.sendGetRequest(connection, Const.GET,"play");
-			//BufferedReader rd  = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			//rd.readLine();
 			Utils.getUrl("play",connMgr);
 		}
 		catch(Exception e){
@@ -71,9 +67,6 @@ public class MainActivity extends Activity {
 	public void nextListener(View v) {
 		Log.d("ManETS","NEXT!!");
 		try{
-			/*Utils.sendGetRequest(connection, Const.GET,"next");
-				BufferedReader rd  = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		        rd.readLine();*/
 			Utils.getUrl("next",connMgr);
 		}
 		catch(Exception e){
@@ -123,9 +116,6 @@ public class MainActivity extends Activity {
 			int id = v.getId();
 			Utils.getUrl("play&option="+id,connMgr);
 		}
-		
-		
-		
 	}
 
 	public void getXML(String command, ConnectivityManager connMgr){
@@ -136,7 +126,7 @@ public class MainActivity extends Activity {
 			new DownloadXmlTask().execute(stringUrl);
 		}
 		else{
-
+			Log.d("ManETS","Exception : No network connection available");
 		}
 	}
 
@@ -147,9 +137,11 @@ public class MainActivity extends Activity {
 				return loadXmlFromNetwork(urls[0]);
 			} catch (IOException e) {
 				//return getResources().getString(R.string.connection_error);
+				Log.d("ManETS","Exception : conection error");
 				return null;
 			} catch (XmlPullParserException e) {
 				// return getResources().getString(R.string.xml_error);
+				Log.d("ManETS","Exception : string xml error");
 				return null;
 			}
 		}
@@ -157,15 +149,10 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPostExecute(List<Song> result) {  
 			if(result != null){
-			
 				ListView lv =(ListView) findViewById(R.id.files_listview);
-				//LinearLayout rl = (LinearLayout) findViewById(R.id.files_container);
 				SongAdapter aa = new SongAdapter(that,R.layout.playlist_song,result);
 				lv.setAdapter(aa);
-				songs = result;
-				
-				//rl.addView(lv);
-				
+				songs = result;				
 			}
 
 		}

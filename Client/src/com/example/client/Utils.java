@@ -5,6 +5,7 @@ import java.net.URL;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 public class Utils {
 	
@@ -30,19 +31,7 @@ public class Utils {
          	new DownloadWebpage().execute(stringUrl);
          }
          else{
-         	//textView.setText("No network connection available.");
+        	 Log.d("ManETS","Exception : No network connection available");
          }
-	}
-	
-	public static void getXML(String command, ConnectivityManager connMgr){
-		String stringUrl = Const.GET+""+command;
-		
-		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if( networkInfo != null && networkInfo.isConnected() ){
-        	//new DownloadXmlTask().execute(stringUrl);
-        }
-        else{
-        	
-        }
 	}
 }	

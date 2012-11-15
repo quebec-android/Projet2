@@ -24,6 +24,7 @@ public class ETSRemote {
 	private MediaListPlayer mediaPlayer;
 	private MediaList mediaList;
 	private boolean random;
+	private int currentSongPlaylistID;
 	
 	public ETSRemote(MediaFolder mediaFolder){
 		this.mediaFolder=mediaFolder;
@@ -39,6 +40,9 @@ public class ETSRemote {
 		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
 		mediaPlayer = mediaPlayerFactory.newMediaListPlayer();
 		mediaList =  mediaPlayerFactory.newMediaList();
+		MediaPlayerListener listener = new MediaPlayerListener(this);
+		mediaPlayer.addMediaListPlayerEventListener(listener);
+		currentSongPlaylistID = 0;
 	}
 	
 	/**
@@ -57,7 +61,8 @@ public class ETSRemote {
 			mediaPlayer.play();
 			return true;
 		} else {
-			mediaPlayer.playItem(idPlaylist);
+			//mediaPlayer.playItem(idPlaylist);//causes application to crash
+			
 			return true;
 		}
 
@@ -77,6 +82,7 @@ public class ETSRemote {
 	
 	public void previous(){
 		mediaPlayer.playPrevious();
+		currentSongPlaylistID--;
 	}
 	
 	public void shuffle(){
@@ -131,4 +137,17 @@ public class ETSRemote {
 		for(MediaListItem media:mediaListAdd)
 			mediaList.addMedia(media.mrl());
 	}
+
+	
+	/**
+	 * SETTERS and GETTERS
+	 */
+	public int getCurrentSongPlaylistID() {
+		return currentSongPlaylistID;
+	}
+
+	public void setCurrentSongPlaylistID(int currentSongPlaylistID) {
+		this.currentSongPlaylistID = currentSongPlaylistID;
+	}
+	
 }

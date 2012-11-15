@@ -161,6 +161,11 @@ public class ManETS_ServerServlet extends HttpServlet {
 			remote.printPlayList(response, xstream);
 		}
 		
+		else if(command != null && command.equals("poll")){
+			int songPlayListID = remote.getCurrentSongPlaylistID();
+			
+		}
+		
 		else{
 			response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
 			response.getWriter().write("Method does not exist");
