@@ -20,13 +20,14 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class ManETS_ServerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ETSRemote remote;
-	private String dossier = "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Media/";
+	private String dossier = "C:\\Users\\Fab\\Desktop\\COURS\\785\\android\\Projet2\\music";
 	/*
-	 * fabien "C:\Users\Fab\Desktop\COURS\785\android\Projet2\music"
+	 * fabien "C:\\Users\\Fab\\Desktop\\COURS\\785\\android\\Projet2\\music"
+	 * 			C:\\Users\\Fab\\Desktop\\COURS\\785\\android\\Projet2\\artwork
 	 * cedric "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Media/"
 	 * 
 	 */
-	private String dossierImage = "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Projet2/ManETS/WebContent/Artwork";
+	private String dossierImage = "C:\\Users\\Fab\\Desktop\\COURS\\785\\android\\Projet2\\artwork";
 	private MediaFolder mediaFolder;
 	private ArtworkFolder artwork;
 	

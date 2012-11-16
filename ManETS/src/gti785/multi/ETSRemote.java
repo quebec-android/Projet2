@@ -28,10 +28,10 @@ public class ETSRemote {
 	
 	public ETSRemote(MediaFolder mediaFolder){
 		this.mediaFolder=mediaFolder;
-		NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "/Applications/VLC.app/Contents/MacOS/lib"
+		NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "C:\\Users\\Fab\\Desktop\\VLC"
 		/*
 		 * "EMPLACEMENT DU DOSSIER QUI CONTIENT libvlc"
-		 * fabien C:\Program Files (x86)\VideoLAN\VLC\sdk\lib
+		 * fabien	C:\\Users\\Fab\\Desktop\\VLC
 		 * cedric /Applications/VLC.app/Contents/MacOS/lib
 		 */
 		);
