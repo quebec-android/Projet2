@@ -1,15 +1,14 @@
-package gti785.multi;
+package gti785.model;
 
-import java.awt.image.BufferedImage;
+
+import gti785.param.Const;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -20,41 +19,70 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 
-import com.thoughtworks.xstream.XStream;
-
 /**
- * Le MediaFolder permet de g√©rer les m√©dias du dossier multim√©dia.
+ * Le MediaFolder permet de gérer les médias du dossier multimédia.
  * 
  * @author Cedric
  *
  */
 public class MediaFolder {
-	private static Map<Integer,Media> filesh = new HashMap<Integer,Media>();
-	private static List<Media> files = new ArrayList();
+	private List<Media> files = null;
 	private File _folder;
 	private ArtworkFolder artwork;
 	
 	/**
-	 * Constructeur, remplit la liste files avec tous les m√©dias du dossier
-	 * multim√©dia.
+	 * Constructeur, remplit la liste files avec tous les médias du dossier
+	 * multimédia.
 	 * 
-	 * @param folder
+	 * @param folder path to the folder which will contain medias
+	 * @param artwork Object responsible for artwork
 	 */
-	public MediaFolder(File folder, ArtworkFolder artwork){
+	public MediaFolder(File folder){
 		_folder = folder;
-		this.artwork = artwork;
-		
-		int i = 1;
+		this.artwork = new ArtworkFolder(new File(Const.dossierImage));
+		this.files = new ArrayList<Media>();
+	}
+	
+	/**
+	 * Checks if extension is .mp3 or .m4a
+	 * @param filename path to check
+	 * @return true if .mp3 or .m4a
+	 */
+	private boolean checkMP3(String filename) { //Déplacer vers utils?
+		int pos = filename.lastIndexOf(".");
+		String extension = filename.substring(pos);
+		return extension.equals(".mp3") || extension.equals(".m4a");
+	}
+	
+	/**
+	 * GETTERS and SETTERS
+	 * 
+	 * @return
+	 */
+	public List<Media> getFiles() {
+		return files;
+	}
+
+	/**
+	 * build is called on creation of the mediaFolder. Retrieves song information 
+	 * of the media folder and creates a media list and associated artwork.
+	 * 
+	 * @return the MediaFolder instance
+	 */
+	public MediaFolder build() {
 		try {
-			
-			for(File file: _folder.listFiles()){
+			int i = 1;
+			for(File file: _folder.listFiles()){//créer une fonction
 				AudioFile f;
 				String filename = file.toString();
 				
-				if( checkMP3(filename)){
+				if( checkMP3(filename)){//if mp3 (or m4a)
 					
+					//jaudiotagger fonctions
 					f = AudioFileIO.read(new File(filename));
 					Tag tag = f.getTag();
+					
+					//retrive song information
 					String album = tag.getFirst(FieldKey.ALBUM);
 					String poster = "http://localhost:8080/ManETS/Artwork/"+album+".png";
 					String length = null;
@@ -64,17 +92,20 @@ public class MediaFolder {
 					/*if(!artwork.imageExist(album)){
 						BufferedImage img = (BufferedImage)tag.getFirstArtwork().getImage(); //error if no artwork
 						//if( img != null)
-							artwork.saveToFolder(img, album);//g√©rer if album = null
+							artwork.saveToFolder(img, album);//gérer if album = null
 					}*/
 					//mettre image par def
+					//create new Media
 					Media media = new Media(i, title[title.length-1], album, length, mrl, poster);
-	
+					
+					//add to list of media
 					files.add(media);
 					i++;
 				}
 			}
 			
 			System.out.println("test:" + files.get(0).getTitle());
+			return this;
 		
 		} catch (CannotReadException e) {
 			System.out.println("Impossible de lire le fichier");
@@ -92,39 +123,7 @@ public class MediaFolder {
 			System.out.println("Frame audio invalide.");
 			//e.printStackTrace();
 		}
-	}
-	
-	private boolean checkMP3(String filename) {
-		int pos = filename.lastIndexOf(".");
-		String extension = filename.substring(pos);
-		return extension.equals(".mp3") || extension.equals(".m4a");
-	}
-
-	/**
-	 * Envoi la liste des m√©dias sous forme XML.
-	 * @param response
-	 */
-	public void print(HttpServletResponse response, XStream xstream){
-		try {				
-			PrintWriter out = response.getWriter();
-			out.write(xstream.toXML(files));
-		} catch (IOException e) {
-			System.out.println("Error while writing file list");
-			//e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * GETTERS and SETTERS
-	 * 
-	 * @return
-	 */
-
-	public static List<Media> getFiles() {
-		return files;
-	}
-
-	public static void setFiles(List<Media> files) {
-		MediaFolder.files = files;
+		
+		return null;
 	}
 }

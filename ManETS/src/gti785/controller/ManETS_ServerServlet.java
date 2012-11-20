@@ -1,18 +1,15 @@
-package gti785.multi;
+package gti785.controller;
 
-import java.io.File;
+import gti785.model.MediaFolder;
+import gti785.remote.ETSRemote;
+import gti785.view.PrintXML;
+
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import uk.co.caprica.vlcj.medialist.MediaListItem;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
  * Servlet implementation class MultiServlet
@@ -20,34 +17,17 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class ManETS_ServerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ETSRemote remote;
-	private String dossier = "C:\\Users\\Fab\\Desktop\\COURS\\785\\android\\Projet2\\music";
-	/*
-	 * fabien "C:\\Users\\Fab\\Desktop\\COURS\\785\\android\\Projet2\\music"
-	 * 			C:\\Users\\Fab\\Desktop\\COURS\\785\\android\\Projet2\\artwork
-	 * cedric "/Users/Cedric/Documents/Quebec/Cours/GTI785/Lab/Lab 02/Media/"
-	 * 
-	 */
-	private String dossierImage = "C:\\Users\\Fab\\Desktop\\COURS\\785\\android\\Projet2\\artwork";
+	
 	private MediaFolder mediaFolder;
-	private ArtworkFolder artwork;
-	
-	private static final XStream xstream = new XStream(new DomDriver());
-	
-	// Configuration de XStream
-	static {
-		xstream.setMode(XStream.NO_REFERENCES);
-		xstream.alias("song", Media.class);
-		xstream.alias("list", List.class);
-		xstream.alias("playlist", MediaListItem.class);
-	}
+	private PrintXML XMLprinter;
 	
     /**
-     * Default constructor. 
+     * Default constructor. Instanciates objects artwork, mediaFolder and remote
      */
     public ManETS_ServerServlet() {
-    	artwork = new ArtworkFolder(new File(dossierImage));
-    	mediaFolder = new MediaFolder(new File(dossier), artwork);
+    	mediaFolder = MediaFolderFactory.getInstance().build();
     	remote = new ETSRemote(mediaFolder);
+    	XMLprinter = new PrintXML();
     }
 
 	/**
@@ -60,10 +40,12 @@ public class ManETS_ServerServlet extends HttpServlet {
 		String command = null;
 		command = request.getParameter("command");
 		
+		//get all media list
 		if(command != null && command.equals("getList")){
-			mediaFolder.print(response, xstream);
+			XMLprinter.printMedia(mediaFolder.getFiles(), response);
 		}
 		
+		//play song
 		else if(command != null && command.equals("play")){
 			String id = null;
 			id = request.getParameter("option");
@@ -81,23 +63,26 @@ public class ManETS_ServerServlet extends HttpServlet {
 			}
 		}
 		
+		//pause song
 		else if(command != null && command.equals("pause")){
 			remote.pause();
 			System.out.println("Song paused");
 		}
 		
+		//stop song
 		else if(command != null && command.equals("stop")){
 			remote.stop();
 			System.out.println("Song stopped");
 		}
 		
+		//add song to playlist
 		else if(command != null && command.equals("playlistadd")){
 			String idSong = null;
 			idSong = request.getParameter("option");
 			System.out.println("Received parameters: " + idSong);
 			if( idSong != null ){
 				if(remote.playListAdd(Integer.parseInt(idSong)))
-					remote.printPlayList(response, xstream);
+					XMLprinter.printPlaylist(remote.getPlaylist(),response);
 				else{
 					error = true;
 					errorMessage = "Play list add: Song does not exist";
@@ -110,12 +95,13 @@ public class ManETS_ServerServlet extends HttpServlet {
 			
 		}
 		
+		//remove song from playlist
 		else if(command != null && command.equals("playlistremove")){
 			String idPlaylist = null;
 			idPlaylist = request.getParameter("option");
 			if( idPlaylist != null ){
 				if(remote.playListRemove(Integer.parseInt(idPlaylist)))
-					remote.printPlayList(response, xstream);
+					XMLprinter.printPlaylist(remote.getPlaylist(),response);
 				else{
 					error = true;
 					errorMessage = "Play list remove: Song does not exist";
@@ -128,19 +114,23 @@ public class ManETS_ServerServlet extends HttpServlet {
 			
 		}
 		
+		//play next song
 		else if(command!=null && command.equals("next")){
 			remote.next();
 		}
 		
+		//play previous song
 		else if(command!=null && command.equals("previous")){
 			remote.previous();
 		}
 		
+		//shuffle play list
 		else if(command != null && command.equals("shuffle")){
 			remote.shuffle();
-			remote.printPlayList(response, xstream);
+			XMLprinter.printPlaylist(remote.getPlaylist(),response);
 		}
 		
+		//repeat action
 		else if(command != null && command.equals("repeat")){
 			String mode = null;
 			mode = request.getParameter("option");
@@ -158,21 +148,25 @@ public class ManETS_ServerServlet extends HttpServlet {
 			}
 		}
 		
+		//print play list songs
 		else if(command != null && command.equals("GetPlayList")){
-			remote.printPlayList(response, xstream);
+			XMLprinter.printPlaylist(remote.getPlaylist(),response);
 		}
 		
+		//get information on current song
 		else if(command != null && command.equals("poll")){
 			int songPlayListID = remote.getCurrentSongPlaylistID();
-			
+			response.getWriter().write("current song: " + songPlayListID);
 		}
 		
+		//return not implemented
 		else{
 			response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
 			response.getWriter().write("Method does not exist");
 			System.out.println("Method does not exist");
 		}
 		
+		//print errors
 		if(error){
 			response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 			response.getWriter().write(errorMessage);
@@ -184,7 +178,7 @@ public class ManETS_ServerServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
 
 }
