@@ -25,5 +25,7 @@ public class PlaylistItem {
 		this.songID = songID;
 	}
 	
-	
+	public void decrementPlaylistID(){
+		SongPlayListID--;
+	}
 }

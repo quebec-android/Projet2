@@ -3,6 +3,7 @@ package gti785.model;
 
 import gti785.param.Const;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,16 +84,20 @@ public class MediaFolder {
 					//retrive song information
 					String album = tag.getFirst(FieldKey.ALBUM);
 					String poster = "http://localhost:8080/ManETS/Artwork/"+album+".png";
-					String length = null;
+					int length = f.getAudioHeader().getTrackLength();
 					String mrl = file.toString();
 					String[] title = mrl.split("/");
 					
-					/*if(!artwork.imageExist(album)){
+					if(!artwork.imageExist(album) && tag.getFirstArtwork() != null){
+						
 						BufferedImage img = (BufferedImage)tag.getFirstArtwork().getImage(); //error if no artwork
 						//if( img != null)
 							artwork.saveToFolder(img, album);//gérer if album = null
-					}*/
-					//mettre image par def
+					}
+					else if(tag.getFirstArtwork() == null){//mettre image par def
+						poster = "http://localhost:8080/ManETS/Artwork/default.png";
+					}
+					
 					//create new Media
 					Media media = new Media(i, title[title.length-1], album, length, mrl, poster);
 					

@@ -10,7 +10,7 @@ public class Media {
 	private int songID;
 	private String title;
 	private String album;
-	private String length;
+	private int length;
 	private String mrl;
 	private String poster;
 	
@@ -23,7 +23,7 @@ public class Media {
 	 * @param mrl
 	 * @param poster
 	 */
-	public Media(int songID, String title, String album, String length, String mrl, String poster){
+	public Media(int songID, String title, String album, int length, String mrl, String poster){
 		this.songID = songID;
 		this.title=title;
 		this.album = album;
@@ -60,11 +60,11 @@ public class Media {
 		this.album = album;
 	}
 
-	public String getLength() {
+	public int getLength() {
 		return length;
 	}
 
-	public void setLength(String length) {
+	public void setLength(int length) {
 		this.length = length;
 	}
 

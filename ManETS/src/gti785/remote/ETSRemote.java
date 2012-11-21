@@ -43,7 +43,7 @@ public class ETSRemote {
 	 * @param mediaFolder
 	 */
 	public ETSRemote(MediaFolder mediaFolder){
-		this.mediaFolder=mediaFolder;
+		this.mediaFolder = mediaFolder;
 		//vlc setup
 		NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), Const.vlcj);
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
@@ -54,7 +54,7 @@ public class ETSRemote {
 		mediaList =  mediaPlayerFactory.newMediaList();
 		MediaPlayerListener listener = new MediaPlayerListener(this);
 		mediaPlayer.addMediaListPlayerEventListener(listener);
-		
+
 		//playlist setup
 		currentSongPlaylistID = 0;
 		playlist = new ArrayList<PlaylistItem>();
@@ -173,6 +173,8 @@ public class ETSRemote {
 		if(mediaList.size() > idPlaylist){
 			mediaList.removeMedia(idPlaylist);
 			mediaPlayer.setMediaList(mediaList);
+			playlist.remove(idPlaylist-1);
+			this.refreshID(idPlaylist-1);
 			return true;
 		}
 		else{
@@ -212,5 +214,11 @@ public class ETSRemote {
 			currentSongPlaylistID++;
 		
 		System.out.println("Increment current song: "+currentSongPlaylistID);
+	}
+	
+	private void refreshID(int pos){
+		for(int i=pos;i<playlist.size();i++){
+			playlist.get(i).decrementPlaylistID();
+		}
 	}
 }
