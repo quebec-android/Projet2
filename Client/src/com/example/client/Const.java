@@ -5,4 +5,7 @@ public class Const {
 	public static String SERVER = "ManETS/ManETS_ServerServlet";
 	public static String PORT = "8080";
 	public static String GET = "http://"+IP+":"+PORT+"/"+SERVER+"?command=";
+	
+	public static int OK = 200;
+	public static int ERROR = 404;
 }

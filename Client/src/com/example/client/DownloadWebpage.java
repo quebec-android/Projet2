@@ -13,6 +13,13 @@ import android.util.Log;
 
 public class DownloadWebpage extends AsyncTask<String,Object,String> {
 	private static final String DEBUG_TAG = "HttpExample";
+	private int statusCode = 200;
+	private MainActivity mainActivity = null;
+	
+	public DownloadWebpage(MainActivity mainActivity) {
+		super();
+		this.mainActivity = mainActivity;
+	}
 	
 	@Override
 	/**
@@ -55,10 +62,15 @@ public class DownloadWebpage extends AsyncTask<String,Object,String> {
 	        conn.setDoInput(true);
 	        // Starts the query
 	        conn.connect();
-	        int response = conn.getResponseCode();
-	        Log.d(DEBUG_TAG, "The response is: " + response);
+	        statusCode =conn.getResponseCode();
+    		Log.d(DEBUG_TAG, "The response is: " + statusCode);
+    		
+        	if (statusCode==200 && (myurl.substring(myurl.indexOf("=")+1,myurl.indexOf("&")).equals("playlistadd") || myurl.substring(myurl.indexOf("=")+1,myurl.indexOf("&")).equals("playlistremove"))) {
+        		Utils.getXML("getPlayList",mainActivity.connMgr,mainActivity);
+        	}
+    		
 	        is = conn.getInputStream();
-
+	        
 	        // Convert the InputStream into a string
 	        String contentAsString = readIt(is, len);
 	        return contentAsString;
@@ -79,6 +91,14 @@ public class DownloadWebpage extends AsyncTask<String,Object,String> {
 	    char[] buffer = new char[len];
 	    reader.read(buffer);
 	    return new String(buffer);
+	}
+
+	public int getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
 	}
 			
 }
