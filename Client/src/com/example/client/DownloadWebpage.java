@@ -66,7 +66,7 @@ public class DownloadWebpage extends AsyncTask<String,Object,String> {
     		Log.d(DEBUG_TAG, "The response is: " + statusCode);
     		
         	if (statusCode==200 && (myurl.contains("playlistadd") || myurl.contains("playlistremove"))) {
-        		Utils.getXML("getPlayList",mainActivity.connMgr,mainActivity);
+        		Utils.getXML("GetPlayList",mainActivity.connMgr,mainActivity);
         	}
     		
 	        is = conn.getInputStream();

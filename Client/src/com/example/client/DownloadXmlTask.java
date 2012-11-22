@@ -43,8 +43,8 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 				SongAdapter aa = new SongAdapter(mainActivity,R.layout.playlist_song,result.getList());
 				lv.setAdapter(aa);
 				mainActivity.songs = result.getList();	
-				Utils.getXML("getPlayList",mainActivity.connMgr, mainActivity);
-			} else if (result.getWhatList().equals("getPlayList")){
+				Utils.getXML("GetPlayList",mainActivity.connMgr, mainActivity);
+			} else if (result.getWhatList().equals("GetPlayList")){
 				ListView lv =(ListView) mainActivity.findViewById(R.id.playlist_listview);
 				SongAdapter aa = new SongAdapter(mainActivity,R.layout.playlist_song,result.getList());
 				lv.setAdapter(aa);
@@ -79,8 +79,8 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 
 
 			return new RefreshListResult(songs, "getList");
-		} else if (urlString.substring(urlString.lastIndexOf("=")+1).equals("getPlayList")) {
-			Log.d("ManETS","getPlayList");
+		} else if (urlString.substring(urlString.lastIndexOf("=")+1).equals("GetPlayList")) {
+			Log.d("ManETS","GetPlayList");
 			
 			// Instantiate the parser
 			StackOverflowXmlParser stackOverflowXmlParser = new StackOverflowXmlParser(mainActivity.songs);
@@ -96,7 +96,7 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 				} 
 			}
 			
-			return new RefreshListResult(songs, "getPlayList");
+			return new RefreshListResult(songs, "GetPlayList");
 		}
 		return null;
 	}

@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
 //				
 //				Utils.refreshId(ab.list, id);
 //				lv2.setAdapter(ab);
-				Utils.getXML("getPlayList",connMgr,this);
+				Utils.getXML("GetPlayList",connMgr,this);
 			} else {
 				Log.d("Playlist Listener","Status code : "+statusCode);
 			}
