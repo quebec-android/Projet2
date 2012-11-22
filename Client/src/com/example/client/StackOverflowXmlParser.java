@@ -85,6 +85,8 @@ public class StackOverflowXmlParser {
 		String title = null;
 		String album = null;
 		int id = 0;
+		int length = 0;
+		String url = null;
 		
 		while (parser.next() != XmlPullParser.END_TAG) {
 			if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -97,11 +99,15 @@ public class StackOverflowXmlParser {
 				album = readElement(parser);
 			} else if (name.equals("songID")){
 				id = Integer.parseInt(readElement(parser));
+			} else if (name.equals("length")){
+				length = Integer.parseInt(readElement(parser));
+			} else if (name.equals("poster")){
+				url = readElement(parser);
 			} else {
 				skip(parser);
 			}
 		}
-		return new Song(title, album, id);
+		return new Song(title, album, id, length, url);
 	}
 
 	// For the tags title and summary, extracts their text values.

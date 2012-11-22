@@ -1,24 +1,18 @@
 package com.example.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 public class MainActivity extends Activity {
 
@@ -27,7 +21,14 @@ public class MainActivity extends Activity {
 	MainActivity that;
 	List<Song> songs;
 	List<Song> playlist;
-
+	private ProgressBar progressBar = null;
+	private float progressBarStatus = 0;
+	private int progressBarStatusInt = 0;
+	private Handler mHandler = new Handler();
+	private float currentSongLength = 0;
+	private float increment = 0;
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,6 +38,8 @@ public class MainActivity extends Activity {
 		playlist = new ArrayList<Song>();
 		
 		connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 		
 		//create playlist view
 		List<Song>result = new ArrayList<Song>();
@@ -58,6 +61,25 @@ public class MainActivity extends Activity {
 		Log.d("ManETS","PLAY!!");
 		try{
 			Utils.getUrl("play",connMgr,this);
+			currentSongLength = playlist.get(0).getLength();
+			increment = 100/currentSongLength;
+			Utils.getImage(playlist.get(0).getUrl(), connMgr, this);
+			new Thread(new Runnable() {
+	             public void run() {
+	                 while (progressBarStatusInt < 100) {
+	                	 
+	                     try {
+	                    	progressBarStatus = progressBarStatus + increment;
+	                    	progressBarStatusInt = (int) Math.round(progressBarStatus);
+		                	progressBar.setProgress(progressBarStatusInt);
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+	                 }
+	             }
+	         }).start();
 		}
 		catch(Exception e){
 			Log.d("ManETS","Exception : echec dans la connexion");
