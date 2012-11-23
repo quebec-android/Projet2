@@ -1,6 +1,7 @@
 package gti785.controller;
 
 import gti785.model.MediaFolder;
+import gti785.param.Const;
 import gti785.remote.ETSRemote;
 import gti785.view.PrintXML;
 
@@ -149,7 +150,7 @@ public class ManETS_ServerServlet extends HttpServlet {
 		}
 		
 		//print play list songs
-		else if(command != null && command.equals("GetPlayList")){
+		else if(command != null && command.equals("getPlayList")){
 			XMLprinter.printPlaylist(remote.getPlaylist(),response);
 		}
 		
@@ -159,6 +160,31 @@ public class ManETS_ServerServlet extends HttpServlet {
 			response.getWriter().write("current song: " + songPlayListID);
 		}
 		
+		//get information on current song
+		else if(command != null && command.equals("setStream")){
+			String mode = null;
+			mode = request.getParameter("option");
+			if( mode != null){
+				if (mode.equals("0")) {
+					remote.setStreamingMode(false);
+					System.out.println("Song in play");
+					XMLprinter.printPort(Const.STREAMING_PORT,response);
+					response.setStatus(HttpServletResponse.SC_OK);
+				}else if (mode.equals("1")) {
+					remote.setStreamingMode(true);
+					System.out.println("Song in play");
+					XMLprinter.printPort(Const.STREAMING_PORT,response);
+					response.setStatus(HttpServletResponse.SC_OK);
+				} else {
+					response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+					response.getWriter().write("Streaming mode: no option");
+				}
+			} else {
+				error = true;
+				errorMessage = "Streaming mode: no option";
+			}
+		}
+
 		//return not implemented
 		else{
 			response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);

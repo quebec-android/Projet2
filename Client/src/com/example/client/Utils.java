@@ -41,7 +41,7 @@ public class Utils {
 	}
 	
 	public static void getXML(String command, ConnectivityManager connMgr, MainActivity mainActivity){
-		String stringUrl = Const.GET+""+command;
+		String stringUrl = Const.GET+command;
 
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 		if( networkInfo != null && networkInfo.isConnected() ){

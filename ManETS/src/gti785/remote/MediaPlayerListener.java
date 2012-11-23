@@ -20,7 +20,7 @@ public class MediaPlayerListener implements MediaListPlayerEventListener {
 	}
 	
 	public void mediaDurationChanged(MediaListPlayer arg0, long arg1) {
-		System.out.println("System duration changed : "+arg1);
+		//System.out.println("System duration changed : "+arg1);
 		
 	}
 

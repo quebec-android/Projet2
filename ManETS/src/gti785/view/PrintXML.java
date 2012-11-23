@@ -30,6 +30,7 @@ private static final XStream xstream = new XStream(new DomDriver());
 		xstream.alias("list", List.class);
 		xstream.alias("playlist", MediaListItem.class);
 		xstream.alias("playlist", PlaylistItem.class);
+		xstream.alias("port", String.class);
 	}
 	
 	/**
@@ -53,6 +54,15 @@ private static final XStream xstream = new XStream(new DomDriver());
 			out.write(xstream.toXML(files));
 		} catch (IOException e) {
 			System.out.println("Error while writing file list");
+		}
+	}
+	
+	public void printPort(String port, HttpServletResponse response) {
+		try {				
+			PrintWriter out = response.getWriter();
+			out.write(xstream.toXML(port));
+		} catch (IOException e) {
+			System.out.println("Error while writing port number");
 		}
 	}
 	

@@ -83,7 +83,7 @@ public class MediaFolder {
 					
 					//retrive song information
 					String album = tag.getFirst(FieldKey.ALBUM);
-					String poster = "http://localhost:8080/ManETS/Artwork/"+album+".png";
+					String poster = Const.ARTWORK_URL+album+".png";
 					int length = f.getAudioHeader().getTrackLength();
 					String mrl = file.toString();
 					String[] title = mrl.split("/");
@@ -95,7 +95,7 @@ public class MediaFolder {
 							artwork.saveToFolder(img, album);//gérer if album = null
 					}
 					else if(tag.getFirstArtwork() == null){//mettre image par def
-						poster = "http://localhost:8080/ManETS/Artwork/default.png";
+						poster = Const.ARTWORK_URL+"default.png";
 					}
 					
 					//create new Media

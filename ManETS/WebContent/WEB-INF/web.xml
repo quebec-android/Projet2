@@ -13,7 +13,7 @@
     <description></description>
     <display-name>ManETS_ServerServlet</display-name>
     <servlet-name>ManETS_ServerServlet</servlet-name>
-    <servlet-class>gti785.multi.ManETS_ServerServlet</servlet-class>
+    <servlet-class>gti785.controller.ManETS_ServerServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>ManETS_ServerServlet</servlet-name>

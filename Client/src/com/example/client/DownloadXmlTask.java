@@ -19,7 +19,7 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 		super();
 		this.mainActivity = mainActivity;
 	}
-
+	
 	@Override
 	protected RefreshListResult doInBackground(String... urls) {
 		try {
@@ -64,8 +64,6 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 			// Instantiate the parser
 			StackOverflowXmlParser stackOverflowXmlParser = new StackOverflowXmlParser();
 			List<Song> songs = null;
-			String title = null;
-			String url = null;
 
 			try {
 				stream = downloadUrl(urlString);        
@@ -97,6 +95,22 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 			}
 			
 			return new RefreshListResult(songs, "getPlayList");
+			
+		} else if (urlString.contains("setStream")) {
+			Log.d("ManETS","setStream");
+			
+			// Instantiate the parser
+			StackOverflowXmlParser stackOverflowXmlParser = new StackOverflowXmlParser();
+			
+			try {
+				stream = downloadUrl(urlString);        
+				mainActivity.streamingPort = stackOverflowXmlParser.parseToString(stream);
+
+			} finally {
+				if (stream != null) {
+					stream.close();
+				} 
+			}
 		}
 		return null;
 	}

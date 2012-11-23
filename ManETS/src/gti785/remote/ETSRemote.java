@@ -34,6 +34,7 @@ public class ETSRemote {
 	private boolean random;
 	private int currentSongPlaylistID;
 	private List<PlaylistItem> playlist;
+	private boolean streamingMode = false;
 	
 
 	/**
@@ -59,6 +60,20 @@ public class ETSRemote {
 		currentSongPlaylistID = 0;
 		playlist = new ArrayList<PlaylistItem>();
 	}
+	
+	private String formatHttpStream(String serverAddress, String serverPort) {
+	    String sb = "";
+	    sb+=(":sout=#transcode{acodec=mp4a}");
+	    sb+=(":duplicate{dst=std{access=http,mux=ogg,");
+	    sb+=("dst=");
+	    sb+=(serverAddress);
+	    sb+=(':');
+	    sb+=(serverPort);
+	    sb+=("}}");
+	    return sb;
+	  }
+
+
 	
 	/**
 	 * Methode Play
@@ -115,6 +130,13 @@ public class ETSRemote {
 		currentSongPlaylistID--;
 	}
 	
+	public void changePlaylist() {
+		List<MediaListItem> newMediaList = mediaList.items();
+		mediaList.clear();
+		this.fillMediaList(newMediaList);
+		mediaPlayer.setMediaList(mediaList);
+	}
+	
 	public void shuffle(){
 		//retrieve current playList in new list
 		List<MediaListItem> mediaListForShuffle = mediaList.items();
@@ -155,13 +177,19 @@ public class ETSRemote {
 	public boolean playListAdd(int idSong){
 		if(mediaFolder.getFiles().size() >= idSong && idSong > 0 ){
 			Media song = mediaFolder.getFiles().get(idSong-1);
-			mediaList.addMedia(song.getMrl());
+			if (this.streamingMode == true) {
+				String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
+				mediaList.addMedia(song.getMrl(),options);
+			} else {
+				mediaList.addMedia(song.getMrl());
+			}
 			mediaPlayer.setMediaList(mediaList);
 			playlist.add(new PlaylistItem(playlist.size()+1,song.getSongID()));
 			return true;
 		}
-		else
+		else {
 			return false;
+		}
 	}
 	
 	/**
@@ -187,10 +215,30 @@ public class ETSRemote {
 	 * @param mediaListAdd media used to populate MediaList
 	 */
 	public void fillMediaList(List<MediaListItem> mediaListAdd){
-		for(MediaListItem media:mediaListAdd)
-			mediaList.addMedia(media.mrl());
+		for(MediaListItem media : mediaListAdd) {
+			if (this.streamingMode == true) {
+				String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
+				mediaList.addMedia(media.mrl(),options);
+			} else {
+				mediaList.addMedia(media.mrl());
+			}
+		}
 	}
 
+	public void incrementSongPlaylistID(){
+		if(currentSongPlaylistID == mediaList.size())
+			currentSongPlaylistID = 1;
+		else
+			currentSongPlaylistID++;
+		
+		System.out.println("Increment current song: "+currentSongPlaylistID);
+	}
+	
+	private void refreshID(int pos){
+		for(int i=pos;i<playlist.size();i++){
+			playlist.get(i).decrementPlaylistID();
+		}
+	}
 	
 	/**
 	 * SETTERS and GETTERS
@@ -207,18 +255,14 @@ public class ETSRemote {
 		return playlist;
 	}
 	
-	public void incrementSongPlaylistID(){
-		if(currentSongPlaylistID == mediaList.size())
-			currentSongPlaylistID = 1;
-		else
-			currentSongPlaylistID++;
-		
-		System.out.println("Increment current song: "+currentSongPlaylistID);
+	public boolean isStreamingMode() {
+		return streamingMode;
 	}
-	
-	private void refreshID(int pos){
-		for(int i=pos;i<playlist.size();i++){
-			playlist.get(i).decrementPlaylistID();
+
+	public void setStreamingMode(boolean streamingMode) {
+		if (this.streamingMode != streamingMode) {
+			this.streamingMode = streamingMode;
+			changePlaylist();
 		}
 	}
 }

@@ -8,7 +8,6 @@ import java.util.List;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.util.Log;
 import android.util.Xml;
 
 public class StackOverflowXmlParser {
@@ -22,6 +21,22 @@ public class StackOverflowXmlParser {
 	public StackOverflowXmlParser() {
 	}
 
+	public String parseToString(InputStream in) throws XmlPullParserException, IOException {
+		try {
+			XmlPullParser parser = Xml.newPullParser();
+			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+			parser.setInput(in, null);
+			parser.nextTag();
+	        String name = parser.getName();
+	        if (name.equals("port")) {
+        		return readElement(parser);
+	        }
+		} finally {
+			in.close();
+		}
+		return null;
+	}
+	
 	public List<Song> parse(InputStream in) throws XmlPullParserException, IOException {
 		try {
 			XmlPullParser parser = Xml.newPullParser();
