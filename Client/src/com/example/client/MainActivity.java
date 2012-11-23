@@ -9,10 +9,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 public class MainActivity extends Activity {
 
@@ -24,6 +26,13 @@ public class MainActivity extends Activity {
 	boolean streamingMode = false; 
 	String streamingPort = null;
  
+	private ProgressBar progressBar = null;
+	private float progressBarStatus = 0;
+	private int progressBarStatusInt = 0;
+	private Handler mHandler = new Handler();
+	private float currentSongLength = 0;
+	private float increment = 0;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,6 +42,8 @@ public class MainActivity extends Activity {
 		playlist = new ArrayList<Song>();
 		
 		connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 		
 		//create playlist view
 		List<Song>result = new ArrayList<Song>();
@@ -69,8 +80,26 @@ public class MainActivity extends Activity {
 				} else {
 					streamingMode = false;
 				}
-				
 			}
+			currentSongLength = playlist.get(0).getLength();
+			increment = 100/currentSongLength;
+			Utils.getImage(playlist.get(0).getUrl(), connMgr, this);
+			new Thread(new Runnable() {
+	             public void run() {
+	                 while (progressBarStatusInt < 100) {
+	                	 
+	                     try {
+	                    	progressBarStatus = progressBarStatus + increment;
+	                    	progressBarStatusInt = (int) Math.round(progressBarStatus);
+		                	progressBar.setProgress(progressBarStatusInt);
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+	                 }
+	             }
+	         }).start();
 		}
 		catch(Exception e){
 			Log.d("ManETS","Exception : echec dans la connexion");
@@ -118,9 +147,6 @@ public class MainActivity extends Activity {
 			} else {
 				Log.d("Playlist Listener","Status code : "+statusCode);
 			}
-			
 		}
 	}
-
-	
 }

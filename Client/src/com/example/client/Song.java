@@ -1,28 +1,32 @@
 package com.example.client;
 
 public class Song {
-	public String title;
-	public String url;
-    public String album;
-    public int id;
+	private String title;
+	private String url;
+	private String album;
+    private int id;
+    private int length;
     
     public Song(Song song){
-    	this.url = song.getTitle();
+    	this.url = song.getUrl();
         this.album = song.getAlbum();
         this.id = song.getId();
-        this.title=this.url;
-        if (url.lastIndexOf("\\")!=-1) {
+        this.title=song.getTitle();
+        if (title.lastIndexOf("\\")!=-1) {
         	this.title = this.title.substring(url.lastIndexOf("\\"));
         }
+        this.length = song.getLength();
     }
-    public Song(String title, String album, int id) {
-        this.url = title;
+    
+	public Song(String title, String album, int id, int length, String url) {
+        this.url = url;
         this.album = album;
         this.id = id;
-        this.title=this.url;
-        if (url.lastIndexOf("\\")!=-1) {
+        this.title = title;
+        if (title.lastIndexOf("\\")!=-1) {
         	this.title = this.title.substring(url.lastIndexOf("\\")+1);
         }
+        this.length = length;
     }
 
 	public Song() {
@@ -54,8 +58,11 @@ public class Song {
 	public void setId(int id) {
 		this.id = id;
 	}
-
-    
-    
+	public int getLength() {
+		return length;
+	}
+	public void setLength(int length) {
+		this.length = length;
+	}   
 }
   
