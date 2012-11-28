@@ -40,6 +40,7 @@ public class ManETS_ServerServlet extends HttpServlet {
 		
 		String command = null;
 		command = request.getParameter("command");
+		System.out.println(command);
 		
 		//get all media list
 		if(command != null && command.equals("getList")){

@@ -70,7 +70,7 @@ public class MediaFolder {
 	 */
 	public MediaFolder build() {
 		try {
-			int i = 1;
+			int i = 0;
 			for(File file: _folder.listFiles()){//créer une fonction
 				AudioFile f;
 				String filename = file.toString();
