@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -32,7 +33,8 @@ public class MainActivity extends Activity {
 	private Handler mHandler = new Handler();
 	private float currentSongLength = 0;
 	private float increment = 0;
-	private boolean isConnected = false;
+
+	private boolean modifyPlaylist = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,7 @@ public class MainActivity extends Activity {
 		lv.setAdapter(aa);
 		
 		Utils.getXML("getList",connMgr,this);
-		Utils.getXML("setStream&option=0", connMgr, this);
+		Utils.getXML("setStream&option=1", connMgr, this);
 	} 
    
 	@Override
@@ -69,7 +71,7 @@ public class MainActivity extends Activity {
 			Utils.getUrl("play",connMgr,this);	 	
 			if (streamingMode) {
 				if (streamingPort == null) {
-					Utils.getXML("setStream&option=1", connMgr, this);
+					Utils.getXML("setStream&option=0", connMgr, this);
 				}
 				
 				if (streamingPort != null) {
@@ -132,6 +134,22 @@ public class MainActivity extends Activity {
 		Log.d("ManETS","toBeginning!!");
 	} 
 	
+	public void modifyPlaylist(View v) {
+		if(modifyPlaylist){
+			modifyPlaylist = false;
+			Button p1_button = (Button)findViewById(R.id.modifyPlaylistButton);
+			
+			p1_button.setText("Modifier");
+		}
+		else{
+			modifyPlaylist = true;
+			Button p1_button = (Button)findViewById(R.id.modifyPlaylistButton);
+			p1_button.setText("Stop");
+		}
+		
+		Log.d("ManETS","toBeginning!!");
+	} 
+	
 	public void playlist_eventlistener(View v){
 		View parent = (View) v.getParent();
 		
@@ -141,8 +159,14 @@ public class MainActivity extends Activity {
 			Utils.getUrl("playlistadd&option="+id,connMgr,this);
 			
 		} else if( parentID == R.id.playlist_listview) {//play song from playlist 
-			int id = v.getId(); 
-			int statusCode = Utils.getUrl("playlistremove&option="+id,connMgr,this);
+			int id = v.getId();
+			String command = null;
+			if(modifyPlaylist)
+				command = "playlistremove&option="+id;
+			if(!modifyPlaylist)
+				command = "play&option="+id;
+			
+			int statusCode = Utils.getUrl(command,connMgr,this);
 			if ( statusCode == Const.OK) {
 				Utils.getXML("getPlayList",connMgr,this);
 			} else {
@@ -150,6 +174,4 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
-	
-    
 }
