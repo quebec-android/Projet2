@@ -43,6 +43,13 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 				SongAdapter aa = new SongAdapter(mainActivity,R.layout.playlist_song,result.getList());
 				lv.setAdapter(aa);
 				mainActivity.songs = result.getList();	
+				
+				//On démarre la socket pour écouter le serveur
+				// on est sûr que le serveur est démarré et prêt
+				ListenerThread client = new ListenerThread();
+				client.start();
+				
+				// on actualise la playlist
 				Utils.getXML("getPlayList",mainActivity.connMgr, mainActivity);
 			} else if (result.getWhatList().equals("getPlayList")){
 				ListView lv =(ListView) mainActivity.findViewById(R.id.playlist_listview);

@@ -51,8 +51,8 @@ public class SongAdapter extends ArrayAdapter<Song> {
         }
         
         Song song = list.get(position);
-        row.setText(song.title);
-        row.setId(song.id);
+        row.setText(song.getTitle());
+        row.setId(song.getId());
         
         return row;
     }

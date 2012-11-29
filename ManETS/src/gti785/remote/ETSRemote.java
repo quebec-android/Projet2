@@ -5,6 +5,7 @@ import gti785.model.Media;
 import gti785.model.MediaFolder;
 import gti785.model.PlaylistItem;
 import gti785.param.Const;
+import gti785.push.Push;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +35,8 @@ public class ETSRemote {
 	private boolean random;
 	private int currentSongPlaylistID;
 	private List<PlaylistItem> playlist;
-	private boolean streamingMode = false;
+	private boolean streamingMode = true;
+	private Push server;
 	
 
 	/**
@@ -42,8 +44,9 @@ public class ETSRemote {
 	 * assign medias to player.
 	 * 
 	 * @param mediaFolder
+	 * @param server 
 	 */
-	public ETSRemote(MediaFolder mediaFolder){
+	public ETSRemote(MediaFolder mediaFolder, Push server ){
 		this.mediaFolder = mediaFolder;
 		//vlc setup
 		NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), Const.vlcj);
@@ -59,21 +62,10 @@ public class ETSRemote {
 		//playlist setup
 		currentSongPlaylistID = 0;
 		playlist = new ArrayList<PlaylistItem>();
+		
+		this.server = server;
 	}
 	
-	private String formatHttpStream(String serverAddress, String serverPort) {
-	    String sb = "";
-	    sb+=(":sout=#transcode{acodec=mp4a}");
-	    sb+=(":duplicate{dst=std{access=http,mux=ogg,");
-	    sb+=("dst=");
-	    sb+=(serverAddress);
-	    sb+=(':');
-	    sb+=(serverPort);
-	    sb+=("}}");
-	    return sb;
-	  }
-
-
 	
 	/**
 	 * Methode Play
@@ -83,6 +75,10 @@ public class ETSRemote {
 	 * @return boolean
 	 */
 	public boolean play(int idPlaylist){
+		
+		//ICI on envoie l'id de la chanson que l'on va jouer pour actualiser le client
+		server.pushMessage(""+idPlaylist);
+		
 		
 		if( mediaList.size() < 1){
 			return false;
@@ -239,6 +235,19 @@ public class ETSRemote {
 			playlist.get(i).decrementPlaylistID();
 		}
 	}
+	
+	private String formatHttpStream(String serverAddress, String serverPort) {
+	    String sb = "";
+	    sb+=(":sout=#transcode{acodec=mpga}");
+	    sb+=(":duplicate{dst=std{access=http,mux=ts,");
+	    sb+=("dst=");
+	    sb+=(serverAddress);
+	    sb+=(':');
+	    sb+=(serverPort);
+	    sb+=("}}");
+	    return sb;
+	  }
+	
 	
 	/**
 	 * SETTERS and GETTERS

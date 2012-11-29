@@ -40,6 +40,22 @@ public class Utils {
          }
 	}
 	
+	public static int getImage(String command, ConnectivityManager connMgr, MainActivity mainActivity){
+		String stringUrl = "http://10.0.2.2:8080"+command;
+    	
+    	 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+         if( networkInfo != null && networkInfo.isConnected() ){
+        	DownloadWebpage web = new DownloadWebpage(mainActivity);
+        	web.execute(stringUrl);
+        	
+        	return web.getStatusCode();
+         }
+         else{
+        	 Log.d("ManETS","Exception : No network connection available");
+        	 return Const.ERROR;
+         }
+	}
+	
 	public static void getXML(String command, ConnectivityManager connMgr, MainActivity mainActivity){
 		String stringUrl = Const.GET+command;
 

@@ -2,6 +2,7 @@ package gti785.controller;
 
 import gti785.model.MediaFolder;
 import gti785.param.Const;
+import gti785.push.Push;
 import gti785.remote.ETSRemote;
 import gti785.view.PrintXML;
 
@@ -21,14 +22,21 @@ public class ManETS_ServerServlet extends HttpServlet {
 	
 	private MediaFolder mediaFolder;
 	private PrintXML XMLprinter;
-	
+	private static Push server ; 
     /**
      * Default constructor. Instanciates objects artwork, mediaFolder and remote
      */
     public ManETS_ServerServlet() {
+    	try {
+    		server = new Push();
+    		server.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
     	mediaFolder = MediaFolderFactory.getInstance().build();
-    	remote = new ETSRemote(mediaFolder);
+    	remote = new ETSRemote(mediaFolder, server);
     	XMLprinter = new PrintXML();
+    	
     }
 
 	/**
