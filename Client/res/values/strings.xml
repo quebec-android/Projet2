@@ -6,10 +6,19 @@
     <string name="title_activity_main">MainActivity</string>
 	
 	<string name="play">Play</string>
+	<string name="pause">Pause</string>
 	<string name="stop">Stop</string>
 	<string name="next">Next</string>
 	<string name="previous">Previous</string>
 	<string name="toBeginning">toBeginning</string>
+	<string name="random">Shuffle</string>
+	<string name="streaming_turn_on">Stream ON</string>
+	<string name="streaming_turn_off">Stream OFF</string>
+	<string name="modifyPlaylistButton_turn_on">Set Delete Mode</string>
+	<string name="modifyPlaylistButton_turn_off">Set Play Mode</string>
+	<string name="repeat_NONE">Switch to Repeat One Song</string>
+	<string name="repeat_SONG">Switch to Repeat All Songs</string>
+	<string name="repeat_ALL">Switch to Don\'t Repeat</string>
 	
 	<string name="server">ManETS/ManETS_ServerServlet</string>
 	<string name="pref_port">8080</string>

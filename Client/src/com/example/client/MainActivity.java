@@ -5,17 +5,21 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ToggleButton;
+
+import com.example.client.R.string;
 
 public class MainActivity extends Activity {
 
@@ -25,12 +29,11 @@ public class MainActivity extends Activity {
 	List<Song> songs;
 	List<Song> playlist;
 	boolean streamingMode = false; 
-	String streamingPort = null;
+	String streamingPort = null; 
  
 	private ProgressBar progressBar = null;
 	private float progressBarStatus = 0;
 	private int progressBarStatusInt = 0;
-	private Handler mHandler = new Handler();
 	private float currentSongLength = 0;
 	private float increment = 0;
 
@@ -42,7 +45,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		that = this;
 		songs = new ArrayList<Song>();
-		playlist = new ArrayList<Song>();
+		playlist = new ArrayList<Song>(); 
 		
 		connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		
@@ -54,8 +57,15 @@ public class MainActivity extends Activity {
 		SongAdapter aa = new SongAdapter(this,R.layout.playlist_song,result);
 		lv.setAdapter(aa);
 		
+		//on fait un stop au cas où le serveur était en marche
+		Utils.getUrl("stop",connMgr,this);
+		
+		//on met le mode repeat à NONE
+		Utils.getUrl("repeat&option=none",connMgr,this);
+		
+		//on va cherche les deux listes courantes sur le serveur
 		Utils.getXML("getList",connMgr,this);
-		Utils.getXML("setStream&option=1", connMgr, this);
+		Utils.getXML("setStream&option=0", connMgr, this);
 	} 
    
 	@Override
@@ -65,50 +75,79 @@ public class MainActivity extends Activity {
 	}
 
 
-	public void playListener(View v) {
-		Log.d("ManETS","PLAY!!");
-		try{ 
-			Utils.getUrl("play",connMgr,this);	 	
-			if (streamingMode) {
-				if (streamingPort == null) {
-					Utils.getXML("setStream&option=0", connMgr, this);
+	public void playListener(View v) { 
+		Button button = (Button)findViewById(R.id.play);
+		if (button.getText().equals(getString(string.pause))) {
+			Log.d("ManETS","PAUSE!!");
+			Utils.getUrl("pause",connMgr,this);
+			button.setText(string.play);
+		} else {
+			button.setText(string.pause);
+			Log.d("ManETS","PLAY!!");
+			try{
+				Utils.getUrl("play",connMgr,this);	 	
+				if (streamingMode) {
+					if (streamingPort == null) {
+						Utils.getXML("setStream&option=0", connMgr, this);
+					}
+					
+					if (streamingPort != null) {
+						MediaPlayer mediaPlayer = new MediaPlayer();
+						mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+						mediaPlayer.setDataSource(Const.URL+streamingPort); 
+						mediaPlayer.prepare(); // Opération qui prend beaucoup de temps.
+						mediaPlayer.start(); 
+					} else {
+						streamingMode = false;
+					} 
 				}
+				currentSongLength = playlist.get(0).getLength();
+				increment = 100/currentSongLength;
 				
-				if (streamingPort != null) {
-					MediaPlayer mediaPlayer = new MediaPlayer();
-					mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-					mediaPlayer.setDataSource(Const.URL+streamingPort); 
-					mediaPlayer.prepare(); // Opération qui prend beaucoup de temps.
-					mediaPlayer.start();
-				} else {
-					streamingMode = false;
-				}
-			}
-			currentSongLength = playlist.get(0).getLength();
-			increment = 100/currentSongLength;
-			Utils.getImage(playlist.get(0).getUrl(), connMgr, this);
-			new Thread(new Runnable() {
-	             public void run() {
-	                 while (progressBarStatusInt < 100) {
-	                	 
-	                     try {
-	                    	progressBarStatus = progressBarStatus + increment;
-	                    	progressBarStatusInt = (int) Math.round(progressBarStatus);
-		                	progressBar.setProgress(progressBarStatusInt);
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+				//On va chercher la cover
+//			Utils.getImage(playlist.get(0).getUrl(), connMgr, this);
+				
+				
+				new Thread(new Runnable() {
+					public void run() {
+						while (progressBarStatusInt < 100) {
+							
+							try {
+								progressBarStatus = progressBarStatus + increment;
+								progressBarStatusInt = (int) Math.round(progressBarStatus);
+								progressBar.setProgress(progressBarStatusInt);
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
-	                 }
-	             }
-	         }).start();
-		}
-		catch(Exception e){
-			Log.d("ManETS","Exception : echec dans la connexion");
+					}
+				}).start();
+			}
+			catch(Exception e){
+				Log.d("ManETS","Exception : echec dans la connexion");
+			}
 		}
 	}
 
+	public void modifyRepeat(View v) { 
+		Button button = (Button)findViewById(R.id.repeatMode);
+		if (button.getText().equals(getString(string.repeat_NONE))) {
+			Log.d("ManETS","repeat one!!");
+			Utils.getUrl("repeat&option=song",connMgr,this);
+			button.setText(string.repeat_SONG);
+		} else if (button.getText().equals(getString(string.repeat_SONG))) {
+			Log.d("ManETS","repeat all!!");
+			Utils.getUrl("repeat&option=playlist",connMgr,this);
+			button.setText(string.repeat_ALL);
+		} else {
+			Log.d("ManETS","repeat none!!");
+			Utils.getUrl("repeat&option=none",connMgr,this);
+			button.setText(string.repeat_NONE);
+		}
+	}
+	
 	public void nextListener(View v) {
 		Log.d("ManETS","NEXT!!");
 		try{
@@ -132,23 +171,35 @@ public class MainActivity extends Activity {
 
 	public void toBeginningListener(View v) {
 		Log.d("ManETS","toBeginning!!");
+		Utils.getUrl("toBeginning",connMgr,this);
 	} 
 	
-	public void modifyPlaylist(View v) {
-		if(modifyPlaylist){
-			modifyPlaylist = false;
-			Button p1_button = (Button)findViewById(R.id.modifyPlaylistButton);
-			
-			p1_button.setText("Modifier");
-		}
-		else{
-			modifyPlaylist = true;
-			Button p1_button = (Button)findViewById(R.id.modifyPlaylistButton);
-			p1_button.setText("Stop");
-		}
-		
-		Log.d("ManETS","toBeginning!!");
+	public void modifyRandom(View v) {
+		Utils.getUrl("shuffle&option=1",connMgr,this); 
+		Log.d("ManETS","Shuffle up & deal bitch!!");
 	} 
+	
+	public void modifyStreaming(View v) {
+		ToggleButton button = (ToggleButton)findViewById(R.id.streaming);
+		if(button.isChecked()) {
+			Utils.getXML("setStream&option=1", connMgr, this);
+			Log.d("ManETS","Streaming ==> 1");
+		} else {
+			Utils.getXML("setStream&option=0", connMgr, this);
+			Log.d("ManETS","Streaming ==> 0");
+		} 
+	}
+	
+	public void modifyPlaylist(View v) {
+		Button button = (Button)findViewById(R.id.modifyPlaylistButton);
+		if(modifyPlaylist) {
+			modifyPlaylist = false;
+			button.setText(string.modifyPlaylistButton_turn_on);
+		} else {
+			modifyPlaylist = true;
+			button.setText(string.modifyPlaylistButton_turn_off);
+		}
+	}  
 	
 	public void playlist_eventlistener(View v){
 		View parent = (View) v.getParent();
@@ -164,7 +215,7 @@ public class MainActivity extends Activity {
 			if(modifyPlaylist)
 				command = "playlistremove&option="+id;
 			if(!modifyPlaylist)
-				command = "play&option="+id;
+				command = "play&option="+id; 
 			
 			int statusCode = Utils.getUrl(command,connMgr,this);
 			if ( statusCode == Const.OK) {
@@ -173,5 +224,10 @@ public class MainActivity extends Activity {
 				Log.d("Playlist Listener","Status code : "+statusCode);
 			}
 		}
+	}
+	
+	public void setImage(Bitmap bitmap) {
+		ImageView image = (ImageView) findViewById(R.id.artwork);
+		image.setImageBitmap(bitmap);
 	}
 }

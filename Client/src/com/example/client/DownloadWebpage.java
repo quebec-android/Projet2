@@ -1,6 +1,5 @@
 package com.example.client;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,15 +8,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ImageView;
 
 public class DownloadWebpage extends AsyncTask<String,Object,String> {
 	private static final String DEBUG_TAG = "HttpExample";
-	private static final int IO_BUFFER_SIZE = 4096;
 	private int statusCode = 200;
 	private MainActivity mainActivity = null;
 	
@@ -70,27 +65,26 @@ public class DownloadWebpage extends AsyncTask<String,Object,String> {
 	        statusCode =conn.getResponseCode();
     		Log.d(DEBUG_TAG, "The response is: " + statusCode);
     		
-        	if (statusCode==200 && (myurl.contains("playlistadd") || myurl.contains("playlistremove"))) {
+        	if (statusCode==200 && (myurl.contains("playlistadd") || myurl.contains("playlistremove") || myurl.contains("shuffle"))) {
         		Utils.getXML("getPlayList",mainActivity.connMgr,mainActivity);
         		is = conn.getInputStream();
         	}
         	
-    		if( (myurl.contains("Artwork"))){
-    			BufferedOutputStream out = null;
-    			Bitmap bitmap = null;
-    			is = conn.getInputStream();
-    			bitmap = BitmapFactory.decodeStream(is);
-    			ImageView image = (ImageView) mainActivity.findViewById(R.id.artwork);
-    			image.setImageBitmap(bitmap);
-    			return null;
-    		}
-    		else{
+//    		if( myurl.contains("Artwork")){
+//    			BufferedOutputStream out = null;
+//    			Bitmap bitmap = null;
+//    			is = conn.getInputStream();
+//    			bitmap = BitmapFactory.decodeStream(is);
+//    			mainActivity.setImage(bitmap);
+//    			return null;
+//    		}
+//    		else{
     			is = conn.getInputStream();
     			// Convert the InputStream into a string
     	        String contentAsString = readIt(is, len);
     	        return contentAsString;
-    		}
-	        
+//    		}
+//	        
 	        
 	        
 	        
@@ -113,7 +107,7 @@ public class DownloadWebpage extends AsyncTask<String,Object,String> {
 	}
 
 	public int getStatusCode() {
-		return statusCode;
+		return statusCode;  
 	}
 
 	public void setStatusCode(int statusCode) {

@@ -11,20 +11,20 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
-		<Button
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content" 
-		    android:text="@string/modifyButton"
-		    android:onClick="modifyPlaylist"
-		    android:id="@+id/modifyPlaylistButton"/>
-
-		<ListView
-		    android:id="@+id/playlist_listview"
-		    android:layout_width="wrap_content"
-		    android:layout_height="0dp"
-		    android:layout_weight="1" >
-		    
-		</ListView>
+        <Button
+            android:id="@+id/modifyPlaylistButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:onClick="modifyPlaylist"
+            android:text="@string/modifyPlaylistButton_turn_on" />
+        
+        <ListView
+            android:id="@+id/playlist_listview"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+        </ListView>
     </LinearLayout>
     
     <RelativeLayout
@@ -106,6 +106,36 @@
 	        android:layout_below="@+id/progressBar1"
 	        android:layout_marginTop="30dp"
 	        android:contentDescription="@string/artwork" />
+
+	    <Button
+	        android:id="@+id/random"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignTop="@+id/progressBar1"
+	        android:onClick="modifyRandom"
+	        android:text="@string/random" />
+
+	    <ToggleButton
+	        android:id="@+id/streaming"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignTop="@+id/artwork"
+	        android:layout_marginTop="37dp"
+	        android:checked="false"
+	        android:onClick="modifyStreaming"
+	        android:textOff="@string/streaming_turn_off"
+	        android:textOn="@string/streaming_turn_on" />
+
+	    <Button
+	        android:id="@+id/repeatMode"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+	        android:text="@string/repeat_NONE" 
+	        android:onClick="modifyRepeat" />
 
 	</RelativeLayout>
  

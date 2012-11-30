@@ -59,7 +59,7 @@ public class ManETS_ServerServlet extends HttpServlet {
 		else if(command != null && command.equals("play")){
 			String id = null;
 			id = request.getParameter("option");
-			int idPlaylist = -1;
+			int idPlaylist = 0;
 			if (id != null) {
 				idPlaylist = Integer.parseInt(id);
 			}
@@ -134,6 +134,11 @@ public class ManETS_ServerServlet extends HttpServlet {
 			remote.previous();
 		}
 		
+		//toBeginning
+		else if(command!=null && command.equals("toBeginning")){
+			remote.toBeginning();
+		}
+		
 		//shuffle play list
 		else if(command != null && command.equals("shuffle")){
 			remote.shuffle();
@@ -176,12 +181,10 @@ public class ManETS_ServerServlet extends HttpServlet {
 			if( mode != null){
 				if (mode.equals("0")) {
 					remote.setStreamingMode(false);
-					System.out.println("Song in play");
 					XMLprinter.printPort(Const.STREAMING_PORT,response);
 					response.setStatus(HttpServletResponse.SC_OK);
 				}else if (mode.equals("1")) {
 					remote.setStreamingMode(true);
-					System.out.println("Song in play");
 					XMLprinter.printPort(Const.STREAMING_PORT,response);
 					response.setStatus(HttpServletResponse.SC_OK);
 				} else {

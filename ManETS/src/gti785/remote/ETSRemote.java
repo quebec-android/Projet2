@@ -16,8 +16,6 @@ import uk.co.caprica.vlcj.medialist.MediaList;
 import uk.co.caprica.vlcj.medialist.MediaListItem;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.list.MediaListPlayer;
-import uk.co.caprica.vlcj.player.list.MediaListPlayerMode;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 import com.sun.jna.Native;
@@ -32,9 +30,8 @@ import com.sun.jna.NativeLibrary;
 public class ETSRemote {
 	private MediaFolder mediaFolder;
 	private MediaPlayer mediaPlayer;
-	private MediaListPlayer mediaPlayerBis;
 	private MediaList mediaList;
-	private boolean random;
+	private String repeatMode = Const.ALL;
 	private int currentSongPlaylistID;
 	private List<PlaylistItem> playlist;
 	private boolean streamingMode = true;
@@ -60,8 +57,8 @@ public class ETSRemote {
 		
 		//mediaPlayerBis = mediaPlayerFactory.newMediaListPlayer();
 		mediaList =  mediaPlayerFactory.newMediaList();
-		//MediaPlayerListener listener = new MediaPlayerListener(this);
-		//mediaPlayerBis.addMediaListPlayerEventListener(listener);
+		MediaPlayerListener listener = new MediaPlayerListener(this);
+		mediaPlayer.addMediaPlayerEventListener(listener);
 
 		//playlist setup
 		currentSongPlaylistID = 0;
@@ -85,33 +82,18 @@ public class ETSRemote {
 		if( playlist.size() < 1){
 			return false;
 		}
-		if( idPlaylist == -1 ){
-			int songId = playlist.get(0).getSongID();
-			if (this.streamingMode == true) {
-				String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
-				mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl(),options);
-			} else {
-				mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl());
-			}
-			
-			currentSongPlaylistID = 0;
-			return true;
+		int songId = playlist.get(idPlaylist).getSongID();
+		currentSongPlaylistID = idPlaylist;
+		if(idPlaylist > playlist.size())
+			return false;
+		
+		if (this.streamingMode == true) {
+			String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
+			mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl(),options);
 		} else {
-			int songId = playlist.get(idPlaylist).getSongID();
-			currentSongPlaylistID = idPlaylist;
-			idPlaylist++; //client starts at 0 for playlist, server at 1
-			System.out.println("Play song: "+idPlaylist);
-			if(idPlaylist > playlist.size())
-				return false;
-			
-			if (this.streamingMode == true) {
-				String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
-				mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl(),options);
-			} else {
-				mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl());
-			}
-			return true;
+			mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl());
 		}
+		return true;
 
 	}
 	
@@ -127,14 +109,14 @@ public class ETSRemote {
 	public void next(){
 		currentSongPlaylistID++;
 		if(currentSongPlaylistID > playlist.size()-1){
-			currentSongPlaylistID = 0;
-		}
-		int songId = playlist.get(currentSongPlaylistID).getSongID();
-		if (this.streamingMode == true) {
-			String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
-			mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl(),options);
+			if (repeatMode.equals(Const.ALL)) {
+				currentSongPlaylistID = 0;
+				play(currentSongPlaylistID);
+			} else {
+				stop();
+			}
 		} else {
-			mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl());
+			play(currentSongPlaylistID);
 		}
 	}
 	
@@ -143,25 +125,18 @@ public class ETSRemote {
 		if(currentSongPlaylistID < 0){
 			currentSongPlaylistID = 0;
 		}
-		int songId = playlist.get(currentSongPlaylistID).getSongID();
-		if (this.streamingMode == true) {
-			String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
-			mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl(),options);
-		} else {
-			mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl());
-		}
+		play(currentSongPlaylistID);
 	}
 	
-	/*public void changePlaylist() {
-		List<MediaListItem> newMediaList = mediaList.items();
-		mediaList.clear();
-		this.fillMediaList(newMediaList);
-		mediaPlayer.setMediaList(mediaList);
-	}*/
+	public void toBeginning(){
+		play(currentSongPlaylistID);
+	}
 	
 	public void shuffle(){
 		//shuffle list
+		stop();
 		Collections.shuffle(playlist);
+		play(0);
 	}
 	
 	/**
@@ -170,16 +145,19 @@ public class ETSRemote {
 	 * @return boolean information on success
 	 */
 	public boolean repeat(String option){
-		/*if (option.equals("song")){
-			mediaPlayer.setMode(MediaListPlayerMode.REPEAT);
+		if (option.equals("song")){
+			repeatMode = Const.SONG;
+			mediaPlayer.setRepeat(true);
 			return true;
 		} else if (option.equals("playlist")) {
-			mediaPlayer.setMode(MediaListPlayerMode.LOOP);
+			repeatMode = Const.ALL;
+			mediaPlayer.setRepeat(false);
 			return true;
 		} else if (option.equals("none")) {
-			mediaPlayer.setMode(MediaListPlayerMode.DEFAULT);
+			repeatMode = Const.NONE;
+			mediaPlayer.setRepeat(false);
 			return true;
-		}*/
+		}
 		return false;
 	}
 	
@@ -191,13 +169,6 @@ public class ETSRemote {
 	public boolean playListAdd(int idSong){
 		if(mediaFolder.getFiles().size() >= idSong && idSong >= 0 ){
 			Media song = mediaFolder.getFiles().get(idSong);
-			
-			if (this.streamingMode == true) {
-				String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
-			} else {
-
-			}
-			
 			playlist.add(new PlaylistItem(playlist.size(),song.getSongID()));
 			return true;
 		}
@@ -288,5 +259,13 @@ public class ETSRemote {
 		if (this.streamingMode != streamingMode) {
 			this.streamingMode = streamingMode;
 		}
+	}
+
+	public String getRepeatMode() {
+		return repeatMode;
+	}
+
+	public void setRepeatMode(String repeatMode) {
+		this.repeatMode = repeatMode;
 	}
 }
