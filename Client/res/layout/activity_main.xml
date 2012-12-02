@@ -107,22 +107,12 @@
 	        android:layout_marginTop="30dp"
 	        android:contentDescription="@string/artwork" />
 
-	    <Button
-	        android:id="@+id/random"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignTop="@+id/progressBar1"
-	        android:onClick="modifyRandom"
-	        android:text="@string/random" />
-
 	    <ToggleButton
 	        android:id="@+id/streaming"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignTop="@+id/artwork"
-	        android:layout_marginTop="37dp"
+	        android:layout_alignParentTop="true"
+	        android:layout_alignRight="@+id/progressBar1"
 	        android:checked="false"
 	        android:onClick="modifyStreaming"
 	        android:textOff="@string/streaming_turn_off"
@@ -132,10 +122,19 @@
 	        android:id="@+id/repeatMode"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
 	        android:layout_alignParentTop="true"
-	        android:text="@string/repeat_NONE" 
-	        android:onClick="modifyRepeat" />
+	        android:layout_alignRight="@+id/artwork"
+	        android:onClick="modifyRepeat"
+	        android:text="@string/repeat_NONE" />
+
+	    <Button
+	        android:id="@+id/random"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignLeft="@+id/play"
+	        android:layout_alignParentTop="true"
+	        android:onClick="modifyRandom"
+	        android:text="@string/random" />
 
 	</RelativeLayout>
  

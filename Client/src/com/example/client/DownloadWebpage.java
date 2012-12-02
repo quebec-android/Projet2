@@ -70,6 +70,7 @@ public class DownloadWebpage extends AsyncTask<String,Object,String> {
         		is = conn.getInputStream();
         	}
         	
+        	
 //    		if( myurl.contains("Artwork")){
 //    			BufferedOutputStream out = null;
 //    			Bitmap bitmap = null;

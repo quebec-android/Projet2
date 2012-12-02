@@ -12,8 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.medialist.MediaList;
-import uk.co.caprica.vlcj.medialist.MediaListItem;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
@@ -30,7 +28,6 @@ import com.sun.jna.NativeLibrary;
 public class ETSRemote {
 	private MediaFolder mediaFolder;
 	private MediaPlayer mediaPlayer;
-	private MediaList mediaList;
 	private String repeatMode = Const.ALL;
 	private int currentSongPlaylistID;
 	private List<PlaylistItem> playlist;
@@ -55,8 +52,6 @@ public class ETSRemote {
 		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
 		mediaPlayer = mediaPlayerFactory.newHeadlessMediaPlayer();
 		
-		//mediaPlayerBis = mediaPlayerFactory.newMediaListPlayer();
-		mediaList =  mediaPlayerFactory.newMediaList();
 		MediaPlayerListener listener = new MediaPlayerListener(this);
 		mediaPlayer.addMediaPlayerEventListener(listener);
 
@@ -167,7 +162,8 @@ public class ETSRemote {
 	 * @return true if song was added
 	 */
 	public boolean playListAdd(int idSong){
-		if(mediaFolder.getFiles().size() >= idSong && idSong >= 0 ){
+		
+		if(mediaFolder.getFiles().size() >= idSong && idSong >= 0 ){//works because their is no holes between ids
 			Media song = mediaFolder.getFiles().get(idSong);
 			playlist.add(new PlaylistItem(playlist.size(),song.getSongID()));
 			return true;
@@ -183,7 +179,7 @@ public class ETSRemote {
 	 * @return true if media is removed
 	 */
 	public boolean playListRemove(int idPlaylist) {
-		if(playlist.size() > idPlaylist && idPlaylist >= 0){
+		if(playlist.size() > idPlaylist && idPlaylist >= 0 && idPlaylist != currentSongPlaylistID){
 			playlist.remove(idPlaylist);
 			this.refreshID(idPlaylist);
 			return true;
@@ -193,34 +189,12 @@ public class ETSRemote {
 		}
 	}
 	
-	/**
-	 * Used to fill the MediaList with a list of medias
-	 * @param mediaListAdd media used to populate MediaList
-	 */
-	public void fillMediaList(List<MediaListItem> mediaListAdd){
-		for(MediaListItem media : mediaListAdd) {
-			if (this.streamingMode == true) {
-				String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
-				mediaList.addMedia(media.mrl(),options);
-			} else {
-				mediaList.addMedia(media.mrl());
-			}
-		}
-	}
-
-	public void incrementSongPlaylistID(){
-		if(currentSongPlaylistID == mediaList.size())
-			currentSongPlaylistID = 1;
-		else
-			currentSongPlaylistID++;
-		
-		System.out.println("Increment current song: "+currentSongPlaylistID);
-	}
-	
 	private void refreshID(int pos){
 		for(int i=pos;i<playlist.size();i++){
 			playlist.get(i).decrementPlaylistID();
 		}
+		if(currentSongPlaylistID > pos)
+			currentSongPlaylistID--;
 	}
 	
 	private String formatHttpStream(String serverAddress, String serverPort) {

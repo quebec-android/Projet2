@@ -30,14 +30,10 @@ public class MainActivity extends Activity {
 	List<Song> playlist;
 	boolean streamingMode = false; 
 	String streamingPort = null; 
- 
-	private ProgressBar progressBar = null;
-	private float progressBarStatus = 0;
-	private int progressBarStatusInt = 0;
-	private float currentSongLength = 0;
-	private float increment = 0;
-
+ 	
 	private boolean modifyPlaylist = false;
+	private ProgressBarManager progressBarManager = null;
+	private int currentSong = 0;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -48,8 +44,6 @@ public class MainActivity extends Activity {
 		playlist = new ArrayList<Song>(); 
 		
 		connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		
-		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 		
 		//create playlist view
 		List<Song>result = new ArrayList<Song>();
@@ -81,6 +75,8 @@ public class MainActivity extends Activity {
 			Log.d("ManETS","PAUSE!!");
 			Utils.getUrl("pause",connMgr,this);
 			button.setText(string.play);
+			if(progressBarManager != null)
+				progressBarManager.pause();
 		} else {
 			button.setText(string.pause);
 			Log.d("ManETS","PLAY!!");
@@ -101,29 +97,18 @@ public class MainActivity extends Activity {
 						streamingMode = false;
 					} 
 				}
-				currentSongLength = playlist.get(0).getLength();
-				increment = 100/currentSongLength;
 				
 				//On va chercher la cover
 //			Utils.getImage(playlist.get(0).getUrl(), connMgr, this);
 				
+				if(progressBarManager == null){
+					float currentSongLength = playlist.get(0).getLength();
+					this.newProgressBar(currentSongLength);
+				}
+				else{
+					progressBarManager.play();
+				}
 				
-				new Thread(new Runnable() {
-					public void run() {
-						while (progressBarStatusInt < 100) {
-							
-							try {
-								progressBarStatus = progressBarStatus + increment;
-								progressBarStatusInt = (int) Math.round(progressBarStatus);
-								progressBar.setProgress(progressBarStatusInt);
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
-				}).start();
 			}
 			catch(Exception e){
 				Log.d("ManETS","Exception : echec dans la connexion");
@@ -161,12 +146,16 @@ public class MainActivity extends Activity {
 	public void previousListener(View v) {
 		Log.d("ManETS","PREVIOUS!!");
 		Utils.getUrl("previous",connMgr,this);
+		//Utils.getUrl("poll",connMgr,this);
 	}
 
 	
 	public void stopListener(View v) {
 		Log.d("ManETS","STOP!!");
+		Button button = (Button)findViewById(R.id.play);
+		button.setText(string.play);
 		Utils.getUrl("stop",connMgr,this);
+		progressBarManager.interrupt();
 	} 
 
 	public void toBeginningListener(View v) {
@@ -214,8 +203,13 @@ public class MainActivity extends Activity {
 			String command = null;
 			if(modifyPlaylist)
 				command = "playlistremove&option="+id;
-			if(!modifyPlaylist)
-				command = "play&option="+id; 
+			if(!modifyPlaylist){
+				command = "play&option="+id;
+				Button button = (Button)findViewById(R.id.play);
+				button.setText(string.pause);
+				float currentSongLength = playlist.get(id).getLength();
+				this.newProgressBar(currentSongLength);
+			}
 			
 			int statusCode = Utils.getUrl(command,connMgr,this);
 			if ( statusCode == Const.OK) {
@@ -229,5 +223,14 @@ public class MainActivity extends Activity {
 	public void setImage(Bitmap bitmap) {
 		ImageView image = (ImageView) findViewById(R.id.artwork);
 		image.setImageBitmap(bitmap);
+	}
+	
+	public void newProgressBar(float currentSongLength){
+		if(progressBarManager != null)
+			progressBarManager.interrupt();
+	
+		ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar1);
+		progressBarManager = new ProgressBarManager(currentSongLength,progressBar);
+		progressBarManager.start();
 	}
 }
