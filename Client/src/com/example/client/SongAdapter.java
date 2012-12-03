@@ -22,7 +22,6 @@ public class SongAdapter extends ArrayAdapter<Song> {
 		this.resource = resource;
 		this.list = list;
 		this.context = context;
-		
 	}
 	
 
@@ -33,22 +32,6 @@ public class SongAdapter extends ArrayAdapter<Song> {
         
         LayoutInflater inflater = ((Activity)context).getLayoutInflater();
         row = (PlayListElement) inflater.inflate(resource, parent, false);
-        
-        if(row == null)
-        {
-           // LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            //row = (PlayListElement) inflater.inflate(resource, parent, false);
-            
-           // holder = new SongHolder();
-           // holder.imgIcon = (ImageView)row.findViewById(R.id.imgIcon);
-            //holder.txtTitle = (PlayListElement) row.findViewById(R.layout.playlist_song);
-            
-            //row.setTag(holder);
-        }
-        else
-        {
-            //holder = (SongHolder)row.getTag();
-        }
         
         Song song = list.get(position);
         row.setText(song.getTitle());

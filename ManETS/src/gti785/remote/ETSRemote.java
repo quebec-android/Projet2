@@ -31,12 +31,12 @@ public class ETSRemote {
 	private MediaFolder mediaFolder;
 	private MediaPlayer mediaPlayer;
 	private MediaList mediaList;
-	private String repeatMode = Const.ALL;
+	private String repeatMode = Const.NONE;
 	private int currentSongPlaylistID;
 	private List<PlaylistItem> playlist;
-	private boolean streamingMode = true;
+	private boolean streamingMode = false;
 	private Push server;
-	
+
 
 	/**
 	 * Constructor: instanciates the vlcj libraries and the objects used to
@@ -50,11 +50,11 @@ public class ETSRemote {
 		//vlc setup
 		NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), Const.vlcj);
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
-		
+
 		//media remote setup
 		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
 		mediaPlayer = mediaPlayerFactory.newHeadlessMediaPlayer();
-		
+
 		//mediaPlayerBis = mediaPlayerFactory.newMediaListPlayer();
 		mediaList =  mediaPlayerFactory.newMediaList();
 		MediaPlayerListener listener = new MediaPlayerListener(this);
@@ -63,10 +63,10 @@ public class ETSRemote {
 		//playlist setup
 		currentSongPlaylistID = 0;
 		playlist = new ArrayList<PlaylistItem>();
-		
+
 		this.server = server;
 	}
-	
+
 	/**
 	 * Methode Play
 	 * if param set to null, plays first item in play list
@@ -75,9 +75,9 @@ public class ETSRemote {
 	 * @return boolean
 	 */
 	public boolean play(int idPlaylist){
-		
+
 		//ICI on envoie l'id de la chanson que l'on va jouer pour actualiser le client
-		server.pushMessage(""+idPlaylist);
+		server.pushMessage(Const.ID,""+idPlaylist);
 
 		if( playlist.size() < 1){
 			return false;
@@ -86,7 +86,7 @@ public class ETSRemote {
 		currentSongPlaylistID = idPlaylist;
 		if(idPlaylist > playlist.size())
 			return false;
-		
+
 		if (this.streamingMode == true) {
 			String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
 			mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl(),options);
@@ -96,16 +96,20 @@ public class ETSRemote {
 		return true;
 
 	}
-	
+
 	public void pause(){
-		mediaPlayer.pause();
+		if (mediaPlayer.isPlaying()){
+			mediaPlayer.pause();
+		} else {
+			mediaPlayer.play();
+		}
 	}
-	
+
 	public void stop(){
 		mediaPlayer.stop();
 		currentSongPlaylistID = 0;
 	}
-	
+
 	public void next(){
 		currentSongPlaylistID++;
 		if(currentSongPlaylistID > playlist.size()-1){
@@ -114,12 +118,13 @@ public class ETSRemote {
 				play(currentSongPlaylistID);
 			} else {
 				stop();
+				server.pushMessage(Const.END);
 			}
 		} else {
 			play(currentSongPlaylistID);
 		}
 	}
-	
+
 	public void previous(){
 		currentSongPlaylistID--;
 		if(currentSongPlaylistID < 0){
@@ -127,18 +132,26 @@ public class ETSRemote {
 		}
 		play(currentSongPlaylistID);
 	}
-	
+
 	public void toBeginning(){
 		play(currentSongPlaylistID);
 	}
-	
+
 	public void shuffle(){
 		//shuffle list
 		stop();
 		Collections.shuffle(playlist);
+		actualiseIDPlaylist();
 		play(0);
 	}
-	
+
+	public void actualiseIDPlaylist() {
+		int pos = 0;
+		for (PlaylistItem item : playlist) {
+			item.setSongPlayListID(pos++);
+		}
+	}
+
 	/**
 	 * repeat is used to repeat a song, a playlist or nothing
 	 * @param option "song" to repear a song, "paylist" for the entire playlist, "none" to deactivate
@@ -160,7 +173,7 @@ public class ETSRemote {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Add song to playlist
 	 * @param idSong of media to add
@@ -176,7 +189,7 @@ public class ETSRemote {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Remove song from playlist
 	 * @param idPlaylist of mediaListElement to remove
@@ -184,6 +197,11 @@ public class ETSRemote {
 	 */
 	public boolean playListRemove(int idPlaylist) {
 		if(playlist.size() > idPlaylist && idPlaylist >= 0){
+			if (idPlaylist == currentSongPlaylistID) {
+				return false;
+			} else {
+				currentSongPlaylistID--;
+			}
 			playlist.remove(idPlaylist);
 			this.refreshID(idPlaylist);
 			return true;
@@ -192,7 +210,7 @@ public class ETSRemote {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Used to fill the MediaList with a list of medias
 	 * @param mediaListAdd media used to populate MediaList
@@ -213,29 +231,29 @@ public class ETSRemote {
 			currentSongPlaylistID = 1;
 		else
 			currentSongPlaylistID++;
-		
+
 		System.out.println("Increment current song: "+currentSongPlaylistID);
 	}
-	
+
 	private void refreshID(int pos){
 		for(int i=pos;i<playlist.size();i++){
 			playlist.get(i).decrementPlaylistID();
 		}
 	}
-	
+
 	private String formatHttpStream(String serverAddress, String serverPort) {
-	    String sb = "";
-	    sb+=(":sout=#transcode{acodec=mp4a}");
-	    sb+=(":duplicate{dst=std{access=http,mux=ts,");
-	    sb+=("dst=");
-	    sb+=(serverAddress);
-	    sb+=(':');
-	    sb+=(serverPort);
-	    sb+=("}}");
-	    return sb;
-	  }
-	
-	
+		String sb = "";
+		sb+=(":sout=#transcode{acodec=mp4a}");
+		sb+=(":duplicate{dst=std{access=http,mux=ts,");
+		sb+=("dst=");
+		sb+=(serverAddress);
+		sb+=(':');
+		sb+=(serverPort);
+		sb+=("}}");
+		return sb;
+	}
+
+
 	/**
 	 * SETTERS and GETTERS
 	 */
@@ -246,11 +264,11 @@ public class ETSRemote {
 	public void setCurrentSongPlaylistID(int currentSongPlaylistID) {
 		this.currentSongPlaylistID = currentSongPlaylistID;
 	}
-	
+
 	public List<PlaylistItem> getPlaylist() {
 		return playlist;
 	}
-	
+
 	public boolean isStreamingMode() {
 		return streamingMode;
 	}

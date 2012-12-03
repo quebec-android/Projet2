@@ -65,6 +65,7 @@ public class ManETS_ServerServlet extends HttpServlet {
 			}
 			if(remote.play(idPlaylist)){
 				System.out.println("Song in play");
+				XMLprinter.printAfterPlay(""+idPlaylist, response);
 				response.setStatus(HttpServletResponse.SC_OK);
 			}
 			else{
@@ -210,6 +211,10 @@ public class ManETS_ServerServlet extends HttpServlet {
 			response.getWriter().write(errorMessage);
 			System.out.println(errorMessage);
 		}
+	}
+	
+	public void printResponse(HttpServletResponse response) {
+		
 	}
 
 	/**

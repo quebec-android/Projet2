@@ -8,6 +8,7 @@ import java.util.List;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.util.Log;
 import android.util.Xml;
 
 public class StackOverflowXmlParser {
@@ -63,6 +64,8 @@ public class StackOverflowXmlParser {
         		song.add(readEntry(parser));
 	        } else if (name.equals("playlist")) {
         		song.add(readEntryPlaylist(parser));
+	        } else if (name.equals("songPlayListID")) {
+	        	Log.d("ManETS","chanson jouée : "+readElement(parser));
 	        } else {
         		skip(parser);
 	        }
@@ -91,7 +94,6 @@ public class StackOverflowXmlParser {
 			}
 		}
 		return s;
-		
 	}
 	
 	// Parses the contents of an entry. If it encounters a title, summary, or link tag, hands them off

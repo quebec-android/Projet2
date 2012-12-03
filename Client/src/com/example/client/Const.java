@@ -13,4 +13,7 @@ public class Const {
 	
 	public static int OK = 200;
 	public static int ERROR = 404;
+	
+	public static String ID = "ID";
+	public static String END = "END";
 }

@@ -34,4 +34,7 @@ public class Const {
 	public static String SONG = "SONG";
 	public static String ALL = "ALL";
 	public static String NONE = "NONE";
+	
+	public static String ID = "ID";
+	public static String END = "END";
 }

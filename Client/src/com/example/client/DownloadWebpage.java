@@ -11,6 +11,12 @@ import java.net.URL;
 import android.os.AsyncTask;
 import android.util.Log;
 
+/**
+ * Télécharge des données du serveur en asynchrone 
+ * Utilisée quand il n'y a qu'un code réponse à gérer
+ * @author Fab
+ *
+ */
 public class DownloadWebpage extends AsyncTask<String,Object,String> {
 	private static final String DEBUG_TAG = "HttpExample";
 	private int statusCode = 200;
@@ -66,7 +72,7 @@ public class DownloadWebpage extends AsyncTask<String,Object,String> {
     		Log.d(DEBUG_TAG, "The response is: " + statusCode);
     		
         	if (statusCode==200 && (myurl.contains("playlistadd") || myurl.contains("playlistremove") || myurl.contains("shuffle"))) {
-        		Utils.getXML("getPlayList",mainActivity.connMgr,mainActivity);
+        		Utils.getXML("getPlayList",mainActivity.getConnMgr(),mainActivity);
         		is = conn.getInputStream();
         	}
         	

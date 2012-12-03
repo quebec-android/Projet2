@@ -49,16 +49,24 @@ public class Push extends Thread{
      * Envoie un message au client
      * @param message
      */
-	public void pushMessage(String message) {
+	public void pushMessage(String prefixe, String message) {
 		try {
 			if (connectSocket != null && !connectSocket.isClosed() ) {
-				out.writeObject(message);
+				if (prefixe != null) {
+					out.writeObject(prefixe+":"+message);
+				} else {
+					out.writeObject(message);
+				}
 				out.flush();
-				System.out.println("Serveur> "+message);
+				System.out.println("Serveur> "+prefixe+":"+message);
 			}
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void pushMessage(String message) {
+		pushMessage(null, message);
 	}
 }
 
