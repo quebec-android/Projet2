@@ -70,41 +70,47 @@ public class MainActivity extends Activity {
 	}
 	
 	public void playListener(View v) { 
-		Button button = (Button)findViewById(R.id.play);
-		if (button.getText().equals(getString(string.pause))) {
-			Log.d("ManETS","PAUSE!!");
-			Utils.getUrl("pause",connMgr,this);
-			button.setText(string.play);
-			progressBarThread.setInPause(true);
-		} else {
-			play();
-			if (playingSongID != -1) {
-				progressBarThread.setInPause(false);
+		if (playlist.size() > 0) {
+			Button button = (Button)findViewById(R.id.play);
+			if (button.getText().equals(getString(string.pause))) {
+				Log.d("ManETS","PAUSE!!");
 				Utils.getUrl("pause",connMgr,this);
-				Log.d("ManETS","Reprise de la chanson courante");
-			} else {
-				try{
-					Utils.getXML("play",connMgr,this);	 	
-					if (streamingMode) {
-						if (streamingPort == null) {
-							Utils.getXML("setStream&option=0", connMgr, this);
-						}
-
-						if (streamingPort != null) {
-							MediaPlayer mediaPlayer = new MediaPlayer();
-							mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-							mediaPlayer.setDataSource(Const.URL+streamingPort); 
-							mediaPlayer.prepare(); // Opération qui prend beaucoup de temps.
-							mediaPlayer.start(); 
-						} else {
-							streamingMode = false;
-						} 
-					}
-					//On va chercher la cover
-					//	Utils.getImage(playlist.get(0).getUrl(), connMgr, this);
+				button.setText(string.play);
+				if (progressBarThread != null) {
+					progressBarThread.setInPause(true);
 				}
-				catch(Exception e){
-					Log.d("ManETS","Exception : echec dans la connexion");
+			} else {
+				play();
+				if (playingSongID != -1) {
+					if (progressBarThread != null) {
+						progressBarThread.setInPause(false);
+					}
+					Utils.getUrl("pause",connMgr,this);
+					Log.d("ManETS","Reprise de la chanson courante");
+				} else {
+					try{
+						Utils.getXML("play",connMgr,this);	 	
+						if (streamingMode) {
+							if (streamingPort == null) {
+								Utils.getXML("setStream&option=0", connMgr, this);
+							}
+	
+							if (streamingPort != null) {
+								MediaPlayer mediaPlayer = new MediaPlayer();
+								mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+								mediaPlayer.setDataSource(Const.URL+streamingPort); 
+								mediaPlayer.prepare(); // Opération qui prend beaucoup de temps.
+								mediaPlayer.start(); 
+							} else {
+								streamingMode = false;
+							} 
+						}
+						//On va chercher la cover
+						//	Utils.getImage(playlist.get(0).getUrl(), connMgr, this);
+					}
+					catch(Exception e){
+						Log.d("ManETS","Exception : echec dans la connexion");
+					}
 				}
 			}
 		}
@@ -215,18 +221,17 @@ public class MainActivity extends Activity {
 
 		} else if( parentID == R.id.playlist_listview) {//play song from playlist 
 			int id = v.getId();
-			Log.d("ICI","ELEMENT = "+id);
-			
 			String command = null;
-			if(modifyPlaylist) {
+			if(modifyPlaylist) { //suprime chanson de la playlist
 				command = "playlistremove&option="+id;
 				int statusCode = Utils.getUrl(command,connMgr,this);
 				if ( statusCode == Const.OK) {
 					Utils.getXML("getPlayList",connMgr,this);
+					hilightPlayedSong();
 				} else {
 					Log.d("Playlist Listener","Status code : "+statusCode);
 				}
-			} else {
+			} else { //joue une chanson
 				if (playingSongID != -1) {
 					findViewById(playingSongID).setBackgroundColor(Color.TRANSPARENT);
 				}
@@ -267,10 +272,12 @@ public class MainActivity extends Activity {
 	public void hilightPlayedSong(){
 		runOnUiThread(new Runnable() {
 			public void run() {
-				if (playingSongID != -1) {
-					findViewById(playingSongID).setBackgroundColor(Color.TRANSPARENT);
+				if (playlist.size() > 0) {
+					if (playingSongID != -1) {
+						findViewById(playingSongID).setBackgroundColor(Color.TRANSPARENT);
+					}
+					findViewById(tmpID).setBackgroundColor(Color.GRAY);
 				}
-				findViewById(tmpID).setBackgroundColor(Color.GRAY);
 			}
 		});
 	}

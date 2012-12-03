@@ -55,7 +55,7 @@ public class ListenerThread extends AsyncTask<Void, Void, Void> {
 			mainActivity.hilightPlayedSong();
 			mainActivity.setPlayingSongID(Integer.parseInt(message.substring(message.indexOf(":")+1)));
 			mainActivity.play();
-			if (mainActivity.getProgressBarThread() != null) {
+			if (mainActivity.getProgressBarThread() != null) { 
 				mainActivity.getProgressBarThread().cheat();
 				mainActivity.getProgressBarThread().cancel(true);
 				mainActivity.setProgressBarThread(null);

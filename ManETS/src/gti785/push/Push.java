@@ -54,11 +54,12 @@ public class Push extends Thread{
 			if (connectSocket != null && !connectSocket.isClosed() ) {
 				if (prefixe != null) {
 					out.writeObject(prefixe+":"+message);
+					System.out.println("Serveur> "+prefixe+":"+message);
 				} else {
 					out.writeObject(message);
+					System.out.println("Serveur> "+message);
 				}
 				out.flush();
-				System.out.println("Serveur> "+prefixe+":"+message);
 			}
 		}catch (IOException e) {
 			e.printStackTrace();

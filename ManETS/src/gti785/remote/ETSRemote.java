@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.medialist.events.MediaListEvent;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
@@ -71,10 +70,7 @@ public class ETSRemote {
 	 */
 	public boolean play(int idPlaylist){
 
-		//ICI on envoie l'id de la chanson que l'on va jouer pour actualiser le client
-		server.pushMessage(Const.ID,""+idPlaylist);
-
-		if( playlist.size() < 1){
+		if( playlist.size() <= 0){
 			return false;
 		}
 		int songId = playlist.get(idPlaylist).getSongID();
@@ -82,6 +78,8 @@ public class ETSRemote {
 		if(idPlaylist > playlist.size())
 			return false;
 
+		//ICI on envoie l'id de la chanson que l'on va jouer pour actualiser le client
+		server.pushMessage(Const.ID,""+idPlaylist);
 		if (this.streamingMode == true) {
 			String options = formatHttpStream(Const.IP, Const.STREAMING_PORT);
 			mediaPlayer.playMedia(mediaFolder.getFiles().get(songId).getMrl(),options);
@@ -93,10 +91,12 @@ public class ETSRemote {
 	}
 
 	public void pause(){
-		if (mediaPlayer.isPlaying()){
-			mediaPlayer.pause();
-		} else {
-			mediaPlayer.play();
+		if (playlist.size()>0) {
+			if (mediaPlayer.isPlaying()){
+				mediaPlayer.pause();
+			} else {
+				mediaPlayer.play();
+			}
 		}
 	}
 
@@ -106,26 +106,30 @@ public class ETSRemote {
 	}
 
 	public void next(){
-		currentSongPlaylistID++;
-		if(currentSongPlaylistID > playlist.size()-1){
-			if (repeatMode.equals(Const.ALL)) {
-				currentSongPlaylistID = 0;
-				play(currentSongPlaylistID);
+		if (mediaPlayer.isPlaying()) {
+			currentSongPlaylistID++;
+			if(currentSongPlaylistID > playlist.size()-1){
+				if (repeatMode.equals(Const.ALL)) {
+					currentSongPlaylistID = 0;
+					play(currentSongPlaylistID);
+				} else {
+					stop();
+					server.pushMessage(Const.END);
+				}
 			} else {
-				stop();
-				server.pushMessage(Const.END);
+				play(currentSongPlaylistID);
 			}
-		} else {
-			play(currentSongPlaylistID);
 		}
 	}
 
 	public void previous(){
-		currentSongPlaylistID--;
-		if(currentSongPlaylistID < 0){
-			currentSongPlaylistID = 0;
+		if (mediaPlayer.isPlaying()) {
+			currentSongPlaylistID--;
+			if(currentSongPlaylistID < 0){
+				currentSongPlaylistID = 0;
+			}
+			play(currentSongPlaylistID);
 		}
-		play(currentSongPlaylistID);
 	}
 
 	public void toBeginning(){
@@ -137,7 +141,6 @@ public class ETSRemote {
 		stop();
 		Collections.shuffle(playlist);
 		actualiseIDPlaylist();
-		play(0);
 	}
 
 	public void actualiseIDPlaylist() {
@@ -192,14 +195,20 @@ public class ETSRemote {
 	 * @return true if media is removed
 	 */
 	public boolean playListRemove(int idPlaylist) {
-		if(playlist.size() > idPlaylist && idPlaylist >= 0 && idPlaylist != currentSongPlaylistID){
-			playlist.remove(idPlaylist);
-			this.refreshID(idPlaylist);
-			return true;
+		if(playlist.size() > idPlaylist && idPlaylist >= 0 ){
+			if (!mediaPlayer.isPlayable()) {
+				playlist.remove(idPlaylist);
+				this.refreshID(idPlaylist);
+				return true;
+			} else {
+				if (idPlaylist != currentSongPlaylistID) {
+					playlist.remove(idPlaylist);
+					this.refreshID(idPlaylist);
+					return true;
+				}
+			}
 		}
-		else{
-			return false;
-		}
+		return false;
 	}
 
 	private void refreshID(int pos){
