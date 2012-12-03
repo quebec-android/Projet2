@@ -24,7 +24,6 @@ import com.example.client.R.string;
 
 public class MainActivity extends Activity {
 
-	//private HttpURLConnection connection = null;
 	private ConnectivityManager connMgr;
 	private List<Song> songs;
 	private List<Song> playlist;
@@ -43,11 +42,10 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		songs = new ArrayList<Song>();
 		playlist = new ArrayList<Song>(); 
-
+		
 		connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
 		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
-
+		
 		//create playlist view
 		List<Song>result = new ArrayList<Song>();
 		ListView lv = (ListView) findViewById(R.id.playlist_listview);
@@ -137,10 +135,13 @@ public class MainActivity extends Activity {
 	public void previousListener(View v) {
 		Log.d("ManETS","PREVIOUS!!");
 		Utils.getUrl("previous",connMgr,this);
+		//Utils.getUrl("poll",connMgr,this);
 	}
 
 	public void stopListener(View v) {
 		Log.d("ManETS","STOP!!");
+		Button button = (Button)findViewById(R.id.play);
+		button.setText(string.play);
 		Utils.getUrl("stop",connMgr,this);
 		stop();
 	} 
@@ -263,7 +264,6 @@ public class MainActivity extends Activity {
 		ImageView image = (ImageView) findViewById(R.id.artwork);
 		image.setImageBitmap(bitmap);
 	}
-
 	public void hilightPlayedSong(){
 		runOnUiThread(new Runnable() {
 			public void run() {
