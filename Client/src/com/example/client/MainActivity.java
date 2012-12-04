@@ -18,8 +18,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.ToggleButton;
 
+import com.example.client.R.id;
 import com.example.client.R.string;
 
 public class MainActivity extends Activity {
@@ -33,6 +36,7 @@ public class MainActivity extends Activity {
 	private ProgressBar progressBar = null;
 	private boolean modifyPlaylist = false;
 	private int playingSongID = -1; // -1 ==> joue pas // 0 et + ==> idPlaylist qui est en train d'être jouée
+	private SeekBar volumeBar = null; //0 à 200%
 
 	private int tmpID = 0;
 
@@ -61,12 +65,32 @@ public class MainActivity extends Activity {
 		//on va cherche les deux listes courantes sur le serveur
 		Utils.getXML("getList",connMgr,this);
 		Utils.getXML("setStream&option=0", connMgr, this);
+		
+		//custom de la volumeBar
+		volumeBar = (SeekBar) findViewById(id.volumeBar);
+		volumeBar.setProgress(100);
+		volumeBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+		    public void onStopTrackingTouch(SeekBar arg0) {  
+		    	changeVolume(arg0.getProgress());  
+		    }
+		 
+		    public void onStartTrackingTouch(SeekBar arg0) { 
+		        }
+		    
+		    //When progress level of seekbar1 is changed
+		    public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
+		    }
+		});
 	} 
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
+	}
+	
+	public void changeVolume(int progress){
+		Utils.getUrl("volume&option="+progress,connMgr,this);
 	}
 	
 	public void playListener(View v) { 

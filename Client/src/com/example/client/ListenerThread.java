@@ -43,7 +43,7 @@ public class ListenerThread extends AsyncTask<Void, Void, Void> {
 				Log.e("Listener Thread", "Le serveur ne gère pas les PUSH :(");
 			}
 		}catch (Exception e) { 
-			e.printStackTrace();
+			Log.e("Listener Thread", "Socket closed...");
 		}
 		return null;
 	}

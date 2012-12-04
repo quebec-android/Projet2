@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:orientation="horizontal" >
 
     <LinearLayout
         android:id="@+id/playList_container"
@@ -135,6 +135,15 @@
 	        android:layout_alignParentTop="true"
 	        android:onClick="modifyRandom"
 	        android:text="@string/random" />
+
+	    <SeekBar
+	        android:id="@+id/volumeBar"
+	         android:max="200"
+	        android:layout_width="500dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignRight="@+id/progressBar1"
+	        android:layout_below="@+id/stop"
+	        android:layout_marginTop="43dp" />
 
 	</RelativeLayout>
  

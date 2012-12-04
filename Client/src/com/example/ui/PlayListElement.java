@@ -12,7 +12,7 @@ public class PlayListElement extends TextView {
 	private Paint marginPaint;
 	private Paint linePaint;
 	private int paperColor;
-	private float margin;
+	private float margin; 
 	
 	public PlayListElement(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);

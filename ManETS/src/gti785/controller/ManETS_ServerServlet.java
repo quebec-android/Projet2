@@ -175,6 +175,19 @@ public class ManETS_ServerServlet extends HttpServlet {
 			response.getWriter().write("current song: " + songPlayListID);
 		}
 		
+		//set volume
+		else if(command != null && command.equals("volume")){
+			String volume = request.getParameter("option");
+			if( volume != null){
+				remote.changeVolume(Integer.parseInt(volume));
+				System.out.println("volume: "+volume);
+			}
+			else{
+				error = true;
+				errorMessage = "Volume: no option";
+			}
+		}
+		
 		//get information on current song
 		else if(command != null && command.equals("setStream")){
 			String mode = null;

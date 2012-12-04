@@ -33,6 +33,7 @@ public class ETSRemote {
 	private List<PlaylistItem> playlist;
 	private boolean streamingMode = false;
 	private Push server;
+	private int volume = 100; // %volume du mediaPlayer
 
 
 	/**
@@ -54,10 +55,13 @@ public class ETSRemote {
 		MediaPlayerListener listener = new MediaPlayerListener(this);
 		mediaPlayer.addMediaPlayerEventListener(listener);
 
+		mediaPlayer.setVolume(volume);
+		
 		//playlist setup
 		currentSongPlaylistID = 0;
 		playlist = new ArrayList<PlaylistItem>();
 
+		//push server
 		this.server = server;
 	}
 
@@ -69,7 +73,6 @@ public class ETSRemote {
 	 * @return boolean
 	 */
 	public boolean play(int idPlaylist){
-
 		if( playlist.size() <= 0){
 			return false;
 		}
@@ -100,13 +103,17 @@ public class ETSRemote {
 		}
 	}
 
+	public void changeVolume(int value) {
+		mediaPlayer.setVolume(value);
+	}
+	
 	public void stop(){
 		mediaPlayer.stop();
-		currentSongPlaylistID = 0;
+		currentSongPlaylistID = -1;
 	}
 
 	public void next(){
-		if (mediaPlayer.isPlaying()) {
+		if (currentSongPlaylistID > -1) {
 			currentSongPlaylistID++;
 			if(currentSongPlaylistID > playlist.size()-1){
 				if (repeatMode.equals(Const.ALL)) {
@@ -263,5 +270,13 @@ public class ETSRemote {
 
 	public void setRepeatMode(String repeatMode) {
 		this.repeatMode = repeatMode;
+	}
+
+	public int getVolume() {
+		return volume;
+	}
+
+	public void setVolume(int volume) {
+		this.volume = volume;
 	}
 }
