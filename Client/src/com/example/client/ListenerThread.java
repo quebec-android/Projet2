@@ -53,7 +53,6 @@ public class ListenerThread extends AsyncTask<Void, Void, Void> {
 			Song s = mainActivity.getPlaylist().get(Integer.parseInt(message.substring(message.indexOf(":")+1)));
 			mainActivity.setTmpID(Integer.parseInt(message.substring(message.indexOf(":")+1)));
 			mainActivity.hilightPlayedSong();
-			mainActivity.setPlayingSongID(Integer.parseInt(message.substring(message.indexOf(":")+1)));
 			mainActivity.play();
 			if (mainActivity.getProgressBarThread() != null) { 
 				mainActivity.getProgressBarThread().cheat();
@@ -63,6 +62,7 @@ public class ListenerThread extends AsyncTask<Void, Void, Void> {
 			mainActivity.setProgressBarThread(new ProgressBarThread(mainActivity));
 			mainActivity.getProgressBarThread().setMax(s.getLength());
 			mainActivity.getProgressBarThread().execute();
+			mainActivity.setInformation();
 		} else if (message.contains(Const.END)) {
 			mainActivity.stop();
 		}

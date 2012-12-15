@@ -2,6 +2,11 @@ package com.example.client;
 
 import java.util.List;
 
+/**
+ * the RefreshListResult will refresh the playlist with the given list of songs
+ * @author Cedric
+ *
+ */
 public class RefreshListResult {
 
 	private List<Song> list = null;

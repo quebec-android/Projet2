@@ -20,11 +20,18 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.example.client.R.id;
 import com.example.client.R.string;
 
+/**
+ * The MainActivity activity is the main page of the application with display
+ * of the song list, the playlist and the control buttons
+ * @author Cedric
+ *
+ */
 public class MainActivity extends Activity {
 
 	private ConnectivityManager connMgr;
@@ -89,10 +96,18 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
+	/**
+	 * change volume listener
+	 * @param progress
+	 */
 	public void changeVolume(int progress){
 		Utils.getUrl("volume&option="+progress,connMgr,this);
 	}
 	
+	/**
+	 * play button event listener
+	 * @param v
+	 */
 	public void playListener(View v) { 
 		if (playlist.size() > 0) {
 			Button button = (Button)findViewById(R.id.play);
@@ -140,6 +155,10 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	/**
+	 * repeat button event listener
+	 * @param v
+	 */
 	public void modifyRepeat(View v) { 
 		Button button = (Button)findViewById(R.id.repeatMode);
 		if (button.getText().equals(getString(string.repeat_NONE))) {
@@ -156,18 +175,30 @@ public class MainActivity extends Activity {
 			button.setText(string.repeat_NONE);
 		}
 	}
-
+	
+	/**
+	 * next button event listener
+	 * @param v
+	 */
 	public void nextListener(View v) {
 		Log.d("ManETS","NEXT!!");
 		Utils.getUrl("next",connMgr,this);
 	}
-
+	
+	/**
+	 * previous button event listener
+	 * @param v
+	 */
 	public void previousListener(View v) {
 		Log.d("ManETS","PREVIOUS!!");
 		Utils.getUrl("previous",connMgr,this);
 		//Utils.getUrl("poll",connMgr,this);
 	}
-
+	
+	/**
+	 * stop button event listener
+	 * @param v
+	 */
 	public void stopListener(View v) {
 		Log.d("ManETS","STOP!!");
 		Button button = (Button)findViewById(R.id.play);
@@ -176,6 +207,9 @@ public class MainActivity extends Activity {
 		stop();
 	} 
 
+	/**
+	 * play button event listener
+	 */
 	public void play(){
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -186,6 +220,23 @@ public class MainActivity extends Activity {
 		});
 	}
 	
+	/**
+	 * Adds the song information to the view
+	 */
+	public void setInformation(){
+		runOnUiThread(new Runnable() {//added so method can be called from without the MainActivity
+			public void run() {
+				Song song = playlist.get(playingSongID);
+				TextView tv = (TextView) findViewById(R.id.information);
+				String info = "Album: "+song.getAlbum()+"\nTitle: "+song.getTitle();
+				tv.setText(info);
+			}
+		});
+	}
+	
+	/**
+	 * stop button event listener
+	 */
 	public void stop(){
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -194,6 +245,9 @@ public class MainActivity extends Activity {
 				}
 				Button play = (Button)findViewById(R.id.play);
 				play.setText(string.play);
+				TextView tv = (TextView) findViewById(R.id.information);
+				String info = "";
+				tv.setText(info);
 			}
 		});
 		playingSongID = -1;
@@ -201,29 +255,47 @@ public class MainActivity extends Activity {
 			progressBarThread.cheat();
 		}
 	}
-
+	
+	/**
+	 * toBeginning event listener
+	 * @param v
+	 */
 	public void toBeginningListener(View v) {
 		Log.d("ManETS","toBeginning!!");
 		Utils.getUrl("toBeginning",connMgr,this);
 	} 
-
+	
+	/**
+	 * random button event listener
+	 * @param v
+	 */
 	public void modifyRandom(View v) {
 		stop();
 		Utils.getUrl("shuffle&option=1",connMgr,this); 
 		Log.d("ManETS","Shuffle up & deal bitch!!");
 	} 
-
+	
+	/**
+	 * stream button event listener
+	 * @param v
+	 */
 	public void modifyStreaming(View v) {
 		ToggleButton button = (ToggleButton)findViewById(R.id.streaming);
 		if(button.isChecked()) {
+			streamingMode = true;
 			Utils.getXML("setStream&option=1", connMgr, this);
 			Log.d("ManETS","Streaming ==> 1");
 		} else {
+			streamingMode = false;
 			Utils.getXML("setStream&option=0", connMgr, this);
 			Log.d("ManETS","Streaming ==> 0");
 		} 
 	}
-
+	
+	/**
+	 * modify button event listener
+	 * @param v
+	 */
 	public void modifyPlaylist(View v) {
 		Button button = (Button)findViewById(R.id.modifyPlaylistButton);
 		if(modifyPlaylist) {
@@ -234,7 +306,11 @@ public class MainActivity extends Activity {
 			button.setText(string.modifyPlaylistButton_turn_off);
 		}
 	}  
-
+	
+	/**
+	 * Event listener on the listview elements
+	 * @param v the textview element that was clicked on
+	 */
 	public void playlist_eventlistener(View v){
 		View parent = (View) v.getParent();
 
@@ -279,8 +355,6 @@ public class MainActivity extends Activity {
 							streamingMode = false; 
 						} 
 					}
-					//					//On va chercher la cover
-					//					//Utils.getImage(playlist.get(0).getUrl(), connMgr, this);
 				}
 				catch(Exception e){
 					Log.d("ManETS","Exception : echec dans la connexion");
@@ -288,11 +362,10 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
-
-	public void setImage(Bitmap bitmap) {
-		ImageView image = (ImageView) findViewById(R.id.artwork);
-		image.setImageBitmap(bitmap);
-	}
+	
+	/**
+	 * Highlights the current song
+	 */
 	public void hilightPlayedSong(){
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -301,6 +374,7 @@ public class MainActivity extends Activity {
 						findViewById(playingSongID).setBackgroundColor(Color.TRANSPARENT);
 					}
 					findViewById(tmpID).setBackgroundColor(Color.GRAY);
+					playingSongID = tmpID;
 				}
 			}
 		});

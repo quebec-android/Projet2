@@ -1,5 +1,10 @@
 package com.example.client;
 
+/**
+ * The song object represents a song and contains the main information relative to the song
+ * @author Cedric
+ *
+ */
 public class Song {
 	private String title;
 	private String url;

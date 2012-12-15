@@ -12,6 +12,12 @@ import android.widget.TextView;
 
 import com.example.ui.PlayListElement;
 
+/**
+ * override of SongAdapter class to personnalise the creation of the textview contained in the list. The main
+ * difference with the standard ArrayAdapter is that the textview will have the song id as defautl id
+ * @author Cedric
+ *
+ */
 public class SongAdapter extends ArrayAdapter<Song> {
 	Context context;
 	int resource;

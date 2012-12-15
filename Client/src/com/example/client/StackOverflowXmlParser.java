@@ -11,6 +11,11 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.util.Log;
 import android.util.Xml;
 
+/**
+ * 
+ * @author Cedric
+ *
+ */
 public class StackOverflowXmlParser {
 	private static final String ns = null;
 	private List<Song> songs = null;

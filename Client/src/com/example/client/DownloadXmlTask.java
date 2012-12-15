@@ -22,6 +22,10 @@ import android.widget.ListView;
 public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> {
 	private MainActivity mainActivity = null;
 	
+	/**
+	 * default constructor
+	 * @param mainActivity
+	 */
 	public DownloadXmlTask(MainActivity mainActivity) {
 		super();
 		this.mainActivity = mainActivity;
@@ -45,11 +49,11 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 	@Override
 	protected void onPostExecute(RefreshListResult result) {  
 		if(result != null){
-			if (result.getWhatList().equals("getList")){
-				ListView lv =(ListView) mainActivity.findViewById(R.id.files_listview);
-				SongAdapter aa = new SongAdapter(mainActivity,R.layout.playlist_song,result.getList());
+			if (result.getWhatList().equals("getList")){//if the command was getList
+				ListView lv =(ListView) mainActivity.findViewById(R.id.files_listview);//find the view containing the songs
+				SongAdapter aa = new SongAdapter(mainActivity,R.layout.playlist_song,result.getList());//create a personnalised apdaptor to display song list
 				lv.setAdapter(aa);
-				mainActivity.setSongs(result.getList());	
+				mainActivity.setSongs(result.getList());//add songs to the view
 				
 				//On démarre la socket pour écouter le serveur
 				// on est sûr que le serveur est démarré et prêt
@@ -57,7 +61,7 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 				
 				// on actualise la playlist
 				Utils.getXML("getPlayList",mainActivity.getConnMgr(), mainActivity);
-			} else if (result.getWhatList().equals("getPlayList")){
+			} else if (result.getWhatList().equals("getPlayList")){//if the command was getPLaylist
 				ListView lv =(ListView) mainActivity.findViewById(R.id.playlist_listview);
 				SongAdapter aa = new SongAdapter(mainActivity,R.layout.playlist_song,result.getList());
 				lv.setAdapter(aa);
@@ -71,7 +75,7 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 	// HTML markup. Returns HTML string.
 	private RefreshListResult loadXmlFromNetwork(String urlString) throws XmlPullParserException, IOException {
 		InputStream stream = null;
-		if (urlString.substring(urlString.lastIndexOf("=")+1).equals("getList")) {
+		if (urlString.substring(urlString.lastIndexOf("=")+1).equals("getList")) {//if the command was getList
 			Log.d("ManETS","getList");
 			
 			// Instantiate the parser
@@ -90,7 +94,7 @@ public class DownloadXmlTask extends AsyncTask<String, Void, RefreshListResult> 
 
 
 			return new RefreshListResult(songs, "getList");
-		} else if (urlString.substring(urlString.lastIndexOf("=")+1).equals("getPlayList")) {
+		} else if (urlString.substring(urlString.lastIndexOf("=")+1).equals("getPlayList")) {//if the command was getPlaylist
 			Log.d("ManETS","getPlayList");
 			
 			// Instantiate the parser

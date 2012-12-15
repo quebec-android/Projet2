@@ -32,6 +32,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:id="@+id/currentSong">
+        
 	    <Button
 	        android:id="@+id/previous"
 	        android:layout_width="wrap_content"
@@ -144,6 +145,16 @@
 	        android:layout_alignRight="@+id/progressBar1"
 	        android:layout_below="@+id/stop"
 	        android:layout_marginTop="43dp" />
+
+	    <TextView
+	        android:id="@+id/information"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBottom="@+id/artwork"
+	        android:layout_alignLeft="@+id/previous"
+	        android:layout_alignRight="@+id/progressBar1"
+	        android:layout_alignTop="@+id/artwork"
+	        android:layout_marginTop="33dp" />
 
 	</RelativeLayout>
  

@@ -11,8 +11,6 @@ import com.example.client.R;
 public class PlayListElement extends TextView {
 	private Paint marginPaint;
 	private Paint linePaint;
-	private int paperColor;
-	private float margin; 
 	
 	public PlayListElement(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -37,9 +35,7 @@ public class PlayListElement extends TextView {
 		marginPaint.setColor(myResources.getColor(R.color.playList_background));
 		linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		linePaint.setColor(myResources.getColor(R.color.playList_separation));
-		// Get the paper background color and the margin width.
-		paperColor = myResources.getColor(R.color.playList_background);
-		margin = myResources.getDimension(R.dimen.playList_element_marginTopBottom);
+
 		
 	}
 	

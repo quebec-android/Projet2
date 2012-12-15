@@ -7,7 +7,11 @@ import java.util.List;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-
+/**
+ * Some basic methods used throughout the programme.
+ * @author Cedric
+ *
+ */
 public class Utils {
 	
 	/**
@@ -40,28 +44,6 @@ public class Utils {
          }
 	}
 	
-//	public static int getImage(String command, ConnectivityManager connMgr, MainActivity mainActivity){
-//		String stringUrl = Const.URLARTWORK+command;
-//		//URI uri;
-//		try {
-//			//uri = new URI(Const.PROTOCOLE, null, Const.IP, Integer.parseInt(Const.PORT), command.substring(0, command.lastIndexOf("/")+1)+URLEncoder.encode(command.substring(command.lastIndexOf("/")+1), "UTF-8"),null, null);
-//			 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//	         if( networkInfo != null && networkInfo.isConnected() ){
-//	        	DownloadWebpage web = new DownloadWebpage(mainActivity);
-//	        	web.execute(stringUrl);
-//	        	
-//	        	return web.getStatusCode();
-//	         }
-//	         else{
-//	        	 Log.d("ManETS","Exception : No network connection available");
-//	        	 return Const.ERROR;
-//	         }
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} 
-//		return Const.ERROR;
-//	}
 	
 	public static void getXML(String command, ConnectivityManager connMgr, MainActivity mainActivity){
 		String stringUrl = Const.GET+command;
